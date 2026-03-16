@@ -24,6 +24,9 @@ on:
         default: "5"
         type: string
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   setup-and-download:
     name: Setup Environment and Download Data
