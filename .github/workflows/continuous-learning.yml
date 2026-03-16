@@ -2,6 +2,8 @@ name: Continuous Learning
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 on:
   push:
@@ -119,6 +121,17 @@ jobs:
           summary_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
           PY
 
+      - name: Build monitor dashboard files
+        run: |
+          python scripts/build_monitor_dashboard.py --db sml_state.sqlite3 --out-dir monitor
+
+      - name: Upload monitor dashboard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: monitor-dashboard
+          path: monitor
+          if-no-files-found: error
+
       - name: Upload learning db
         uses: actions/upload-artifact@v4
         with:
@@ -132,6 +145,29 @@ jobs:
           name: sml-model-store
           path: model_store
           if-no-files-found: warn
+
+  deploy-monitor-ui:
+    needs: train-hosted-cycle
+    if: needs.train-hosted-cycle.result == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+
+    steps:
+      - name: Download monitor artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: monitor-dashboard
+          path: monitor
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: monitor
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
   train-self-hosted-continuous:
     if: vars.SML_USE_SELF_HOSTED == 'true' && github.event_name == 'push'

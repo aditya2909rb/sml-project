@@ -84,6 +84,25 @@ Each hosted run now writes a job summary in GitHub Actions with:
 2. Current estimated parameter count
 3. Progress percent toward target
 
+## GitHub UI for stats and logs
+
+A static monitoring UI is now deployed by workflow to GitHub Pages after each successful hosted cycle.
+
+It shows:
+
+1. Latest cycle status
+2. Parameter progress and target percent
+3. Recent cycles table
+4. Recent event/log rows from SQLite
+
+Default Pages URL pattern:
+
+1. `https://<your-username>.github.io/<repo-name>/`
+
+For this repo it should be:
+
+1. `https://aditya2909rb.github.io/sml-project/`
+
 ## No-limit runtime on GitHub
 
 GitHub-hosted runners are time-limited and ephemeral, so true unlimited runtime is not possible there.
