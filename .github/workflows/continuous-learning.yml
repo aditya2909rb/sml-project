@@ -30,11 +30,17 @@ jobs:
       SML_PERSIST_RECENT_MIN_AVG_ACCURACY: "0.0"
       SML_PERSIST_MIN_TRAINED_SAMPLES: "0"
       SML_HN_ENABLED: "true"
+      SML_MAX_ITEMS_PER_FEED: "100"
+      SML_REQUEST_DELAY_SECONDS: "0.2"
+      SML_HN_MAX_ITEMS: "100"
       SML_REDDIT_ENABLED: "true"
+      SML_REDDIT_SUBREDDITS: "technology,MachineLearning,programming,artificial,datascience"
+      SML_REDDIT_MAX_ITEMS: "60"
       SML_ARXIV_ENABLED: "true"
+      SML_ARXIV_MAX_ITEMS: "80"
       SML_SOURCE_ALLOWLIST: ""
       SML_SOURCE_BLOCKLIST: ""
-      SML_FEEDS: "https://feeds.bbci.co.uk/news/rss.xml,https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml,https://www.theverge.com/rss/index.xml,https://hnrss.org/frontpage,https://www.reddit.com/r/MachineLearning/.rss"
+      SML_FEEDS: "https://feeds.bbci.co.uk/news/rss.xml,https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml,https://www.theverge.com/rss/index.xml,https://feeds.arstechnica.com/arstechnica/index,https://www.wired.com/feed/rss,https://hnrss.org/frontpage,https://www.reddit.com/r/MachineLearning/.rss"
 
     steps:
       - name: Checkout
@@ -100,6 +106,40 @@ jobs:
                 LIMIT 1
                 """
               ).fetchone()
+              latest_cycle = conn.execute(
+                """
+                SELECT id, status, new_samples, trained_samples, batch_accuracy, started_at, ended_at
+                FROM cycles
+                ORDER BY id DESC
+                LIMIT 1
+                """
+              ).fetchone()
+              totals = conn.execute(
+                """
+                SELECT COALESCE(SUM(new_samples), 0) AS total_new_samples,
+                       COALESCE(SUM(trained_samples), 0) AS total_trained_samples
+                FROM cycles
+                """
+              ).fetchone()
+              if latest_cycle is not None:
+                lines.extend(
+                  [
+                    f"- Latest cycle id: {latest_cycle['id']}",
+                    f"- Latest cycle status: {latest_cycle['status']}",
+                    f"- Latest cycle new samples: {latest_cycle['new_samples']}",
+                    f"- Latest cycle trained samples: {latest_cycle['trained_samples']}",
+                    f"- Latest cycle batch accuracy: {latest_cycle['batch_accuracy']}",
+                    f"- Latest cycle started: {latest_cycle['started_at']}",
+                    f"- Latest cycle ended: {latest_cycle['ended_at']}",
+                  ]
+                )
+              if totals is not None:
+                lines.extend(
+                  [
+                    f"- Total new samples seen: {totals['total_new_samples']}",
+                    f"- Total trained samples: {totals['total_trained_samples']}",
+                  ]
+                )
               if latest is not None:
                 estimated = int(latest["estimated_params"])
                 target = max(1, int(latest["target_params"]))

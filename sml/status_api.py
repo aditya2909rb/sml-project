@@ -35,6 +35,47 @@ def _query_value(db_path: Path, sql: str) -> int:
         conn.close()
 
 
+def _query_stats(db_path: Path) -> dict:
+    if not db_path.exists():
+        return {
+            "total_new_samples": 0,
+            "total_trained_samples": 0,
+            "recent_avg_batch_accuracy": None,
+            "last_completed_cycle_at": None,
+        }
+    conn = sqlite3.connect(str(db_path))
+    conn.row_factory = sqlite3.Row
+    try:
+        totals = conn.execute(
+            """
+            SELECT COALESCE(SUM(new_samples), 0) AS total_new_samples,
+                   COALESCE(SUM(trained_samples), 0) AS total_trained_samples,
+                   MAX(ended_at) AS last_completed_cycle_at
+            FROM cycles
+            """
+        ).fetchone()
+        avg_row = conn.execute(
+            """
+            SELECT AVG(batch_accuracy) AS recent_avg_batch_accuracy
+            FROM (
+                SELECT batch_accuracy
+                FROM cycles
+                WHERE batch_accuracy IS NOT NULL
+                ORDER BY id DESC
+                LIMIT 5
+            )
+            """
+        ).fetchone()
+        return {
+            "total_new_samples": int(totals["total_new_samples"] or 0),
+            "total_trained_samples": int(totals["total_trained_samples"] or 0),
+            "recent_avg_batch_accuracy": avg_row["recent_avg_batch_accuracy"],
+            "last_completed_cycle_at": totals["last_completed_cycle_at"],
+        }
+    finally:
+        conn.close()
+
+
 def build_status(db_path: Path) -> dict:
     latest = _query_one(
         db_path,
@@ -57,6 +98,7 @@ def build_status(db_path: Path) -> dict:
         """,
     )
     progress_percent = None
+    stats = _query_stats(db_path)
     if model_progress is not None and int(model_progress.get("target_params", 0)) > 0:
         progress_percent = (
             float(model_progress["estimated_params"]) / float(model_progress["target_params"])
@@ -67,6 +109,7 @@ def build_status(db_path: Path) -> dict:
         "db_exists": db_path.exists(),
         "cycle_count": cycle_count,
         "event_count": event_count,
+        "training_totals": stats,
         "latest_cycle": latest,
         "latest_model_progress": model_progress,
         "parameter_progress_percent": progress_percent,
@@ -157,7 +200,14 @@ def make_handler(db_path: Path):
         <div class="card">
             <h1>SML Live Status</h1>
             <p class="muted">Auto-refresh every 5 seconds from <code>/status</code>.</p>
-            <p>Health: <span id="health" class="muted">loading...</span></p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:16px 0;">
+                <div class="card" style="padding:12px;"><div class="muted">Health</div><div id="health" class="muted">loading...</div></div>
+                <div class="card" style="padding:12px;"><div class="muted">Cycles</div><div id="cycleCount">-</div></div>
+                <div class="card" style="padding:12px;"><div class="muted">Total Trained</div><div id="trainedTotal">-</div></div>
+                <div class="card" style="padding:12px;"><div class="muted">Latest New Samples</div><div id="latestNew">-</div></div>
+                <div class="card" style="padding:12px;"><div class="muted">Latest Accuracy</div><div id="latestAcc">-</div></div>
+                <div class="card" style="padding:12px;"><div class="muted">Param Progress</div><div id="paramProgress">-</div></div>
+            </div>
             <pre id="json">Loading status...</pre>
         </div>
     </div>
@@ -169,6 +219,11 @@ def make_handler(db_path: Path):
                 const status = await fetch('/status').then(r => r.json());
                 document.getElementById('health').textContent = health.status === 'ok' ? 'ok' : 'not-ok';
                 document.getElementById('health').className = health.status === 'ok' ? 'ok' : 'muted';
+                document.getElementById('cycleCount').textContent = String(status.cycle_count ?? '-');
+                document.getElementById('trainedTotal').textContent = String(status.training_totals?.total_trained_samples ?? '-');
+                document.getElementById('latestNew').textContent = String(status.latest_cycle?.new_samples ?? '-');
+                document.getElementById('latestAcc').textContent = status.latest_cycle?.batch_accuracy == null ? 'n/a' : String(status.latest_cycle.batch_accuracy);
+                document.getElementById('paramProgress').textContent = status.parameter_progress_percent == null ? 'n/a' : `${status.parameter_progress_percent.toFixed(6)}%`;
                 document.getElementById('json').textContent = JSON.stringify(status, null, 2);
             } catch (err) {
                 document.getElementById('health').textContent = 'error';
