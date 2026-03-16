@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.black_cache/
+*.sqlite3
+model_store/
+.streamlit/

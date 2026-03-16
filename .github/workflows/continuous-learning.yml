@@ -1,0 +1,85 @@
+name: Continuous Learning
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
+
+concurrency:
+  group: sml-continuous-learning
+  cancel-in-progress: false
+
+jobs:
+  train-hosted-cycle:
+    runs-on: ubuntu-latest
+    env:
+      SML_PERSIST_ENABLED: "true"
+      SML_STATE_BRANCH: sml-learning-state
+      SML_PERSIST_EVERY_CYCLES: "1"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Configure git identity
+        run: |
+          git config user.email "sml-bot@users.noreply.github.com"
+          git config user.name "sml-bot"
+
+      - name: Run one SML cycle
+        run: |
+          python main.py run-once
+
+      - name: Upload learning db
+        uses: actions/upload-artifact@v4
+        with:
+          name: sml-state
+          path: sml_state.sqlite3
+          if-no-files-found: warn
+
+  train-self-hosted-continuous:
+    if: github.event_name == 'push'
+    runs-on: self-hosted
+    env:
+      SML_PERSIST_ENABLED: "true"
+      SML_STATE_BRANCH: sml-learning-state
+      SML_PERSIST_EVERY_CYCLES: "1"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Configure git identity
+        run: |
+          git config user.email "sml-bot@users.noreply.github.com"
+          git config user.name "sml-bot"
+
+      - name: Start continuous loop
+        run: |
+          python main.py run-loop --sleep-seconds 30
