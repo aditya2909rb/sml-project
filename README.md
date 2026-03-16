@@ -20,7 +20,6 @@ Its primary GitHub automation path downloads cBioPortal datasets, stores dataset
 - main.py: CLI entrypoint
 - dashboard.py: Streamlit tracker UI
 - .github/workflows/cancer-vaccine-training.yml: automatic cBioPortal download, dataset persistence, and training pipeline
-- .github/workflows/continuous-learning.yml: optional manual text-learning workflow
 
 ## Quick Start (Windows PowerShell)
 
@@ -74,7 +73,7 @@ python main.py run-service --sleep-seconds 30 --host 127.0.0.1 --port 8787
 
 ## GitHub Automation
 
-Two workflows are included:
+GitHub workflow included:
 
 1. OncoSML Cancer Training Pipeline
 - Downloads cBioPortal data.
@@ -83,10 +82,6 @@ Two workflows are included:
 - Trains model from prepared dataset.
 - Commits dataset snapshots to the cbioportal-datasets branch.
 - Uploads training artifacts.
-
-2. OncoSML Text Learning Manual
-- Manual-only workflow.
-- Kept for optional experimentation with feed-based text ingestion.
 
 ## Configuration
 
