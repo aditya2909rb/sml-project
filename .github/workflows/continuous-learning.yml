@@ -152,8 +152,12 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
       - name: Download monitor artifact
         uses: actions/download-artifact@v4
         with:
