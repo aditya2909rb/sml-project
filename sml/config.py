@@ -104,7 +104,7 @@ def load_config() -> SMLConfig:
         arxiv_query=os.getenv("SML_ARXIV_QUERY", "cat:cs.LG OR cat:cs.AI"),
         arxiv_max_items=int(os.getenv("SML_ARXIV_MAX_ITEMS", "40")),
         persist_enabled=_parse_bool(os.getenv("SML_PERSIST_ENABLED"), False),
-        state_branch=os.getenv("SML_STATE_BRANCH", "sml-learning-state"),
+        state_branch=os.getenv("SML_STATE_BRANCH", "sml-state"),
         persist_every_cycles=int(os.getenv("SML_PERSIST_EVERY_CYCLES", "1")),
         status_host=os.getenv("SML_STATUS_HOST", "127.0.0.1"),
         status_port=int(os.getenv("SML_STATUS_PORT", "8787")),

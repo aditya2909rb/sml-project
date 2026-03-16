@@ -299,13 +299,6 @@ black sml/ scripts/
 pytest tests/
 ```
 
-## Documentation
-
-- [API Documentation](docs/api.md)
-- [Architecture Guide](docs/architecture.md)
-- [Training Guide](docs/training.md)
-- [Deployment Guide](docs/deployment.md)
-
 ## Troubleshooting
 
 ### Common Issues
@@ -345,7 +338,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions and support:
 - Create a GitHub issue
-- Email: [your-email@example.com]
 - Project homepage: [https://github.com/aditya2909rb/sml-project](https://github.com/aditya2909rb/sml-project)
 
 ---

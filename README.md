@@ -50,7 +50,7 @@ After pushing to GitHub, the workflow starts automatically and then keeps runnin
 
 1. Pulls new internet data
 2. Runs one training/healing cycle
-3. Commits and pushes learning state to `sml-learning-state` branch
+3. Optionally commits and pushes learning state to a dedicated state branch
 4. Uploads cycle database as an artifact
 
 You can watch local progress from your own machine with Streamlit (`dashboard.py`).
@@ -65,9 +65,9 @@ The workflow in `.github/workflows/continuous-learning.yml` now triggers on:
 
 For GitHub-hosted runs, each new VM now resumes from previous state automatically:
 
-1. Restore `sml_state.sqlite3` and `model_store/` from `sml-learning-state`
+1. Restore `sml_state.sqlite3` and `model_store/` from `SML_STATE_BRANCH` when present
 2. Run one training cycle
-3. Persist updated state back to `sml-learning-state`
+3. Persist updated state back to `SML_STATE_BRANCH`
 
 This means each scheduled run continues from where the previous VM stopped.
 
@@ -84,31 +84,16 @@ Each hosted run now writes a job summary in GitHub Actions with:
 2. Current estimated parameter count
 3. Progress percent toward target
 
-## GitHub UI for stats and logs
+## GitHub monitoring artifacts
 
-A static monitoring UI is now published by workflow to the `gh-pages` branch after each successful hosted cycle.
+Each hosted run uploads a monitor bundle as a GitHub Actions artifact (`monitor-dashboard`).
 
-It shows:
+It contains:
 
-1. Latest cycle status
+1. Latest cycle status snapshot
 2. Parameter progress and target percent
 3. Recent cycles table
 4. Recent event/log rows from SQLite
-
-To enable it once in GitHub:
-
-1. Go to repository Settings -> Pages.
-2. Under Build and deployment, choose Deploy from a branch.
-3. Select branch `gh-pages` and folder `/ (root)`.
-4. Save.
-
-Default Pages URL pattern:
-
-1. `https://<your-username>.github.io/<repo-name>/`
-
-For this repo it should be:
-
-1. `https://aditya2909rb.github.io/sml-project/`
 
 ## No-limit runtime on GitHub
 
@@ -160,12 +145,12 @@ Important:
 
 Each cycle can persist the learning state (`sml_state.sqlite3` and `model_store/`) to a separate branch.
 
-Default branch name: `sml-learning-state`
+Default branch name: `sml-state`
 
 Control with environment variables:
 
 - `SML_PERSIST_ENABLED=true|false`
-- `SML_STATE_BRANCH=sml-learning-state`
+- `SML_STATE_BRANCH=sml-state`
 - `SML_PERSIST_EVERY_CYCLES=1`
 
 The GitHub workflow enables this automatically.

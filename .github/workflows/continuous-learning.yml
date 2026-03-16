@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SML_PERSIST_ENABLED: "true"
-      SML_STATE_BRANCH: sml-learning-state
+      SML_STATE_BRANCH: sml-state
       SML_PERSIST_EVERY_CYCLES: "1"
       SML_PERSIST_MIN_BATCH_ACCURACY: "0.0"
       SML_PERSIST_RECENT_WINDOW: "1"
@@ -144,35 +144,12 @@ jobs:
           path: model_store
           if-no-files-found: warn
 
-  publish-monitor-ui:
-    needs: train-hosted-cycle
-    if: needs.train-hosted-cycle.result == 'success'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Download monitor artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: monitor-dashboard
-          path: monitor
-
-      - name: Publish monitor to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: monitor
-          publish_branch: gh-pages
-          force_orphan: true
-
   train-self-hosted-continuous:
     if: vars.SML_USE_SELF_HOSTED == 'true' && github.event_name == 'push'
     runs-on: self-hosted
     env:
       SML_PERSIST_ENABLED: "true"
-      SML_STATE_BRANCH: sml-learning-state
+      SML_STATE_BRANCH: sml-state
       SML_PERSIST_EVERY_CYCLES: "1"
 
     steps:
