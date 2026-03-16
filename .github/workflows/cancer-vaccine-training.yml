@@ -51,7 +51,7 @@ jobs:
           mkdir -p data/cbioportal/raw
           mkdir -p data/cbioportal/processed
 
-        - name: Download cBioPortal data
+      - name: Download cBioPortal data
         env:
           TRAINING_MODE: ${{ github.event.inputs.training_mode || 'full' }}
           MAX_STUDIES: ${{ github.event.inputs.max_studies || '5' }}
@@ -60,7 +60,7 @@ jobs:
           echo "Max studies: $MAX_STUDIES"
           python scripts/download_cbioportal_data.py
 
-        - name: Prepare combined dataset and diagnostics
+      - name: Prepare combined dataset and diagnostics
         id: dataset_prepare
         run: |
           python - <<'PY'
@@ -176,7 +176,7 @@ jobs:
           path: data/cbioportal/
           retention-days: 30
 
-        - name: Upload cBioPortal diagnostics
+      - name: Upload cBioPortal diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
