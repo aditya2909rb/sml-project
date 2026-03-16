@@ -8,7 +8,15 @@ from sml.data_ingest import fetch_all_samples
 from sml.git_persist import persist_learning_state
 from sml.healing import attempt_self_heal
 from sml.model import OnlineTextModel
-from sml.state import end_cycle, get_recent_batch_accuracies, init_db, log_event, mark_seen_and_filter_new, start_cycle
+from sml.state import (
+    end_cycle,
+    get_recent_batch_accuracies,
+    init_db,
+    log_event,
+    mark_seen_and_filter_new,
+    record_model_progress,
+    start_cycle,
+)
 
 
 def run_one_cycle(config: SMLConfig, repo_root: Path) -> None:
@@ -41,11 +49,46 @@ def run_one_cycle(config: SMLConfig, repo_root: Path) -> None:
         new_hashes = mark_seen_and_filter_new(config.db_path, hashes)
         fresh = [s for s in samples if s.text_hash in new_hashes]
 
-        model = OnlineTextModel(config.model_dir)
+        model = OnlineTextModel(config.model_dir, n_features=config.initial_features)
         model.load()
         train_result = model.train(
             texts=[s.text for s in fresh],
             labels=[s.label for s in fresh],
+        )
+
+        scale_result = model.maybe_scale_up(
+            scaling_enabled=config.scaling_enabled,
+            cycle_id=cycle_id,
+            scale_every_cycles=config.scale_every_cycles,
+            trained_samples=train_result.trained_samples,
+            batch_accuracy=train_result.batch_accuracy,
+            min_samples=config.scale_min_samples,
+            min_accuracy=config.scale_min_accuracy,
+            target_params=config.parameter_target,
+            max_features=config.max_features,
+            feature_ladder=config.feature_ladder,
+        )
+        if scale_result.scaled_up:
+            log_event(
+                config.db_path,
+                "INFO",
+                "model_scale_up",
+                scale_result.message,
+                {
+                    "n_features": model.n_features,
+                    "estimated_params": model.estimated_params,
+                    "target_params": config.parameter_target,
+                },
+            )
+
+        record_model_progress(
+            db_path=config.db_path,
+            cycle_id=cycle_id,
+            n_features=model.n_features,
+            estimated_params=model.estimated_params,
+            target_params=config.parameter_target,
+            scaled_up=scale_result.scaled_up,
+            scale_note=scale_result.message,
         )
 
         heal_result = attempt_self_heal(repo_root)

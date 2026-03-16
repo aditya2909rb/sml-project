@@ -6,6 +6,7 @@ This project gives you a **continuous learning system** that can:
 - Train a model incrementally in cycles
 - Run guarded self-healing actions when checks fail
 - Persist learning state to a dedicated Git branch automatically
+- Grow model capacity automatically with staged parameter scaling
 - Track all learning/healing events in SQLite
 - Show live progress in a local Streamlit dashboard
 - Expose live health and status JSON endpoints
@@ -79,6 +80,32 @@ python main.py run-loop --sleep-seconds 30
 ```
 
 This keeps learning from live internet feeds continuously until you stop the runner.
+
+## Automatic parameter growth
+
+The system now has a scaling controller that increases model capacity over time.
+
+How it works:
+
+1. Every N cycles (`SML_SCALE_EVERY_CYCLES`), it checks scaling conditions.
+2. It only scales when the cycle has enough training samples and minimum accuracy.
+3. It moves to the next feature size in `SML_FEATURE_LADDER`.
+4. If the ladder is exhausted, it doubles up to `SML_MAX_FEATURES`.
+
+Tracked values are written to `model_progress` in the SQLite DB and shown in:
+
+- Streamlit dashboard (`dashboard.py`)
+- Status API (`/status`) as `latest_model_progress`
+
+Long-term target configuration:
+
+- `SML_PARAMETER_TARGET=1024000000000` (1024B target tracker)
+
+Important:
+
+- 1024B is a tracking target in this starter system.
+- Actual reachable size on one machine is bounded by RAM/CPU/GPU and `SML_MAX_FEATURES`.
+- To move beyond local limits, migrate to distributed training infrastructure.
 
 ## Auto state branch persistence
 

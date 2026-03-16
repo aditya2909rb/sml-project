@@ -31,6 +31,14 @@ class SMLConfig:
     persist_recent_window: int
     persist_recent_min_avg_accuracy: float
     persist_min_trained_samples: int
+    scaling_enabled: bool
+    parameter_target: int
+    initial_features: int
+    max_features: int
+    feature_ladder: list[int]
+    scale_every_cycles: int
+    scale_min_samples: int
+    scale_min_accuracy: float
 
 
 DEFAULT_FEEDS = [
@@ -57,6 +65,23 @@ def _parse_bool(raw: str | None, default: bool) -> bool:
     if raw is None:
         return default
     return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _parse_int_list(raw: str | None, default: list[int]) -> list[int]:
+    if not raw:
+        return default
+    out: list[int] = []
+    for item in raw.split(","):
+        value = item.strip()
+        if not value:
+            continue
+        try:
+            parsed = int(value)
+        except ValueError:
+            continue
+        if parsed > 0:
+            out.append(parsed)
+    return out or default
 
 
 def load_config() -> SMLConfig:
@@ -89,4 +114,15 @@ def load_config() -> SMLConfig:
         persist_recent_window=int(os.getenv("SML_PERSIST_RECENT_WINDOW", "5")),
         persist_recent_min_avg_accuracy=float(os.getenv("SML_PERSIST_RECENT_MIN_AVG_ACCURACY", "0.52")),
         persist_min_trained_samples=int(os.getenv("SML_PERSIST_MIN_TRAINED_SAMPLES", "20")),
+        scaling_enabled=_parse_bool(os.getenv("SML_SCALING_ENABLED"), True),
+        parameter_target=int(os.getenv("SML_PARAMETER_TARGET", "1024000000000")),
+        initial_features=int(os.getenv("SML_INITIAL_FEATURES", str(2**18))),
+        max_features=int(os.getenv("SML_MAX_FEATURES", str(2**22))),
+        feature_ladder=_parse_int_list(
+            os.getenv("SML_FEATURE_LADDER"),
+            [2**18, 2**19, 2**20, 2**21, 2**22],
+        ),
+        scale_every_cycles=int(os.getenv("SML_SCALE_EVERY_CYCLES", "3")),
+        scale_min_samples=int(os.getenv("SML_SCALE_MIN_SAMPLES", "80")),
+        scale_min_accuracy=float(os.getenv("SML_SCALE_MIN_ACCURACY", "0.62")),
     )

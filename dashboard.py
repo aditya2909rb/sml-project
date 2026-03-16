@@ -41,15 +41,35 @@ events = query(
     """
 )
 
-col1, col2, col3 = st.columns(3)
+model_progress = query(
+    """
+    SELECT cycle_id, ts, n_features, estimated_params, target_params, scaled_up, scale_note
+    FROM model_progress
+    ORDER BY id DESC
+    LIMIT 50
+    """
+)
+
+col1, col2, col3, col4 = st.columns(4)
 col1.metric("Cycles", len(cycles))
 col2.metric("Events", len(events))
 col3.metric("DB Exists", "Yes" if DB_PATH.exists() else "No")
+if model_progress:
+    latest = model_progress[0]
+    target = max(1, int(latest["target_params"]))
+    current = int(latest["estimated_params"])
+    pct = (current / target) * 100.0
+    col4.metric("Parameter Progress", f"{pct:.6f}%")
+else:
+    col4.metric("Parameter Progress", "n/a")
 
 st.subheader("Recent Cycles")
 st.dataframe(cycles, use_container_width=True)
 
 st.subheader("Recent Events")
 st.dataframe(events, use_container_width=True)
+
+st.subheader("Model Parameter Growth")
+st.dataframe(model_progress, use_container_width=True)
 
 st.caption("Refresh this page to see the newest training/healing cycle.")

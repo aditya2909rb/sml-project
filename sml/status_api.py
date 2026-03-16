@@ -47,6 +47,20 @@ def build_status(db_path: Path) -> dict:
     )
     event_count = _query_value(db_path, "SELECT COUNT(*) FROM events")
     cycle_count = _query_value(db_path, "SELECT COUNT(*) FROM cycles")
+    model_progress = _query_one(
+        db_path,
+        """
+        SELECT cycle_id, ts, n_features, estimated_params, target_params, scaled_up, scale_note
+        FROM model_progress
+        ORDER BY id DESC
+        LIMIT 1
+        """,
+    )
+    progress_percent = None
+    if model_progress is not None and int(model_progress.get("target_params", 0)) > 0:
+        progress_percent = (
+            float(model_progress["estimated_params"]) / float(model_progress["target_params"])
+        ) * 100.0
 
     return {
         "now_utc": _utc_now(),
@@ -54,6 +68,8 @@ def build_status(db_path: Path) -> dict:
         "cycle_count": cycle_count,
         "event_count": event_count,
         "latest_cycle": latest,
+        "latest_model_progress": model_progress,
+        "parameter_progress_percent": progress_percent,
     }
 
 

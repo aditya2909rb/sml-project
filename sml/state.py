@@ -47,6 +47,18 @@ def init_db(db_path: str) -> None:
                 text_hash TEXT PRIMARY KEY,
                 first_seen_at TEXT NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS model_progress (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                cycle_id INTEGER NOT NULL,
+                ts TEXT NOT NULL,
+                n_features INTEGER NOT NULL,
+                estimated_params INTEGER NOT NULL,
+                target_params INTEGER NOT NULL,
+                scaled_up INTEGER NOT NULL DEFAULT 0,
+                scale_note TEXT,
+                FOREIGN KEY(cycle_id) REFERENCES cycles(id)
+            );
             """
         )
         conn.commit()
@@ -122,3 +134,46 @@ def get_recent_batch_accuracies(db_path: str, limit: int) -> list[float]:
             (limit,),
         ).fetchall()
     return [float(row[0]) for row in rows]
+
+
+def record_model_progress(
+    db_path: str,
+    cycle_id: int,
+    n_features: int,
+    estimated_params: int,
+    target_params: int,
+    scaled_up: bool,
+    scale_note: str,
+) -> None:
+    with closing(connect(db_path)) as conn:
+        conn.execute(
+            """
+            INSERT INTO model_progress(
+                cycle_id, ts, n_features, estimated_params, target_params, scaled_up, scale_note
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                cycle_id,
+                utc_now(),
+                n_features,
+                estimated_params,
+                target_params,
+                1 if scaled_up else 0,
+                scale_note,
+            ),
+        )
+        conn.commit()
+
+
+def get_latest_model_progress(db_path: str) -> dict[str, Any] | None:
+    with closing(connect(db_path)) as conn:
+        row = conn.execute(
+            """
+            SELECT cycle_id, ts, n_features, estimated_params, target_params, scaled_up, scale_note
+            FROM model_progress
+            ORDER BY id DESC
+            LIMIT 1
+            """
+        ).fetchone()
+    return dict(row) if row is not None else None
