@@ -2,8 +2,6 @@ name: Continuous Learning
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 on:
   push:
@@ -146,17 +144,14 @@ jobs:
           path: model_store
           if-no-files-found: warn
 
-  deploy-monitor-ui:
+  publish-monitor-ui:
     needs: train-hosted-cycle
     if: needs.train-hosted-cycle.result == 'success'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Download monitor artifact
         uses: actions/download-artifact@v4
@@ -164,14 +159,33 @@ jobs:
           name: monitor-dashboard
           path: monitor
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: monitor
+      - name: Publish monitor to gh-pages branch
+        run: |
+          git config user.email "sml-bot@users.noreply.github.com"
+          git config user.name "sml-bot"
+          TMP_DIR="$(mktemp -d)"
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            git fetch origin gh-pages
+            git worktree add "$TMP_DIR" gh-pages
+          else
+            git worktree add -b gh-pages "$TMP_DIR" HEAD
+          fi
+
+          find "$TMP_DIR" -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          cp -R monitor/. "$TMP_DIR"/
+          touch "$TMP_DIR/.nojekyll"
+
+          cd "$TMP_DIR"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No monitor UI changes to publish."
+          else
+            git commit -m "docs(monitor): update github pages dashboard"
+            git push origin gh-pages
+          fi
+          cd -
+          git worktree remove "$TMP_DIR" --force
 
   train-self-hosted-continuous:
     if: vars.SML_USE_SELF_HOSTED == 'true' && github.event_name == 'push'

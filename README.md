@@ -86,7 +86,7 @@ Each hosted run now writes a job summary in GitHub Actions with:
 
 ## GitHub UI for stats and logs
 
-A static monitoring UI is now deployed by workflow to GitHub Pages after each successful hosted cycle.
+A static monitoring UI is now published by workflow to the `gh-pages` branch after each successful hosted cycle.
 
 It shows:
 
@@ -94,6 +94,13 @@ It shows:
 2. Parameter progress and target percent
 3. Recent cycles table
 4. Recent event/log rows from SQLite
+
+To enable it once in GitHub:
+
+1. Go to repository Settings -> Pages.
+2. Under Build and deployment, choose Deploy from a branch.
+3. Select branch `gh-pages` and folder `/ (root)`.
+4. Save.
 
 Default Pages URL pattern:
 
