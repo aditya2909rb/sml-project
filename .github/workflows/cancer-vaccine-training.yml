@@ -1,4 +1,4 @@
-name: Cancer Vaccine AI Training Pipeline
+name: OncoSML Cancer Training Pipeline
 
 on:
   push:

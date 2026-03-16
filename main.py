@@ -10,7 +10,7 @@ from sml.status_api import run_status_server
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Self-Maintaining Learning (SML)")
+    parser = argparse.ArgumentParser(description="OncoSML: Cancer Vaccine Learning System")
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("run-once", help="Run one ingest/train/heal cycle")
