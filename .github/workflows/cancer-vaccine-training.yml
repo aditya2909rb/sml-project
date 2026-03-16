@@ -250,9 +250,21 @@ jobs:
             git rm -rf . >/dev/null 2>&1 || true
           fi
 
+          if [ -d /tmp/cbioportal-artifact/data/cbioportal ]; then
+            SRC_DIR="/tmp/cbioportal-artifact/data/cbioportal"
+          elif [ -d /tmp/cbioportal-artifact/cbioportal ]; then
+            SRC_DIR="/tmp/cbioportal-artifact/cbioportal"
+          elif [ -d /tmp/cbioportal-artifact/processed ] || [ -d /tmp/cbioportal-artifact/raw ]; then
+            SRC_DIR="/tmp/cbioportal-artifact"
+          else
+            echo "Unable to locate dataset files under /tmp/cbioportal-artifact"
+            find /tmp/cbioportal-artifact -maxdepth 3 -type d -print || true
+            exit 1
+          fi
+
           rm -rf data/cbioportal
           mkdir -p data
-          cp -a /tmp/cbioportal-artifact/data/cbioportal data/cbioportal
+          cp -a "$SRC_DIR" data/cbioportal
 
           git add -A data/cbioportal
           if git diff --cached --quiet; then
