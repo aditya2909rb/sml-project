@@ -1,0 +1,61 @@
+{
+  "generated_at_utc": "2026-03-16T12:47:30+00:00",
+  "db_exists": true,
+  "latest_cycle": {
+    "id": 1,
+    "started_at": "2026-03-16T12:47:19+00:00",
+    "ended_at": "2026-03-16T12:47:29+00:00",
+    "status": "ok",
+    "new_samples": 203,
+    "trained_samples": 203,
+    "batch_accuracy": 0.9802955665024631,
+    "notes": "cycle completed"
+  },
+  "latest_model_progress": {
+    "cycle_id": 1,
+    "ts": "2026-03-16T12:47:29+00:00",
+    "n_features": 262144,
+    "estimated_params": 262145,
+    "target_params": 1024000000000,
+    "scaled_up": 0,
+    "scale_note": "not a scaling cycle"
+  },
+  "parameter_progress_percent": 2.5600097656249998e-05,
+  "recent_cycles": [
+    {
+      "id": 1,
+      "started_at": "2026-03-16T12:47:19+00:00",
+      "ended_at": "2026-03-16T12:47:29+00:00",
+      "status": "ok",
+      "new_samples": 203,
+      "trained_samples": 203,
+      "batch_accuracy": 0.9802955665024631
+    }
+  ],
+  "recent_events": [
+    {
+      "ts": "2026-03-16T12:47:30+00:00",
+      "level": "INFO",
+      "event_type": "state_persist",
+      "message": "state committed and pushed to sml-learning-state"
+    },
+    {
+      "ts": "2026-03-16T12:47:29+00:00",
+      "level": "INFO",
+      "event_type": "healing",
+      "message": "self-heal run completed"
+    },
+    {
+      "ts": "2026-03-16T12:47:29+00:00",
+      "level": "WARN",
+      "event_type": "ingest_error",
+      "message": "reddit: 403 Client Error: Blocked for url: https://www.reddit.com/r/technology/new.json?limit=30"
+    },
+    {
+      "ts": "2026-03-16T12:47:19+00:00",
+      "level": "INFO",
+      "event_type": "cycle_start",
+      "message": "cycle 1 started"
+    }
+  ]
+}
