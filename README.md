@@ -71,6 +71,19 @@ For GitHub-hosted runs, each new VM now resumes from previous state automaticall
 
 This means each scheduled run continues from where the previous VM stopped.
 
+Hosted runs are configured to train from all enabled resource groups each cycle:
+
+1. RSS feeds (including tech/news + extra feed list in workflow env)
+2. Hacker News
+3. Reddit
+4. arXiv
+
+Each hosted run now writes a job summary in GitHub Actions with:
+
+1. Restored state timestamp
+2. Current estimated parameter count
+3. Progress percent toward target
+
 ## No-limit runtime on GitHub
 
 GitHub-hosted runners are time-limited and ephemeral, so true unlimited runtime is not possible there.

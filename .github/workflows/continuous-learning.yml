@@ -26,6 +26,12 @@ jobs:
       SML_PERSIST_RECENT_WINDOW: "1"
       SML_PERSIST_RECENT_MIN_AVG_ACCURACY: "0.0"
       SML_PERSIST_MIN_TRAINED_SAMPLES: "0"
+      SML_HN_ENABLED: "true"
+      SML_REDDIT_ENABLED: "true"
+      SML_ARXIV_ENABLED: "true"
+      SML_SOURCE_ALLOWLIST: ""
+      SML_SOURCE_BLOCKLIST: ""
+      SML_FEEDS: "https://feeds.bbci.co.uk/news/rss.xml,https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml,https://www.theverge.com/rss/index.xml,https://hnrss.org/frontpage,https://www.reddit.com/r/MachineLearning/.rss"
 
     steps:
       - name: Checkout
@@ -58,6 +64,60 @@ jobs:
       - name: Run one SML cycle
         run: |
           python main.py run-once
+
+      - name: Write training summary
+        run: |
+          python - <<'PY'
+          import os
+          import sqlite3
+          from pathlib import Path
+
+          db = Path("sml_state.sqlite3")
+          summary_path = Path(os.environ["GITHUB_STEP_SUMMARY"])
+
+          restored = "not found"
+          if db.exists():
+            restored = db.stat().st_mtime
+
+          lines = [
+            "## SML Hosted Cycle Summary",
+            "",
+            f"- Restored state timestamp (unix): {restored}",
+          ]
+
+          if db.exists():
+            conn = sqlite3.connect(str(db))
+            conn.row_factory = sqlite3.Row
+            try:
+              latest = conn.execute(
+                """
+                SELECT cycle_id, ts, n_features, estimated_params, target_params, scaled_up, scale_note
+                FROM model_progress
+                ORDER BY id DESC
+                LIMIT 1
+                """
+              ).fetchone()
+              if latest is not None:
+                estimated = int(latest["estimated_params"])
+                target = max(1, int(latest["target_params"]))
+                pct = (estimated / target) * 100.0
+                lines.extend(
+                  [
+                    f"- Current estimated parameters: {estimated}",
+                    f"- Progress to target: {pct:.8f}%",
+                    f"- Latest model-progress timestamp: {latest['ts']}",
+                    f"- Last scaling note: {latest['scale_note']}",
+                  ]
+                )
+              else:
+                lines.append("- No model progress rows found yet.")
+            finally:
+              conn.close()
+          else:
+            lines.append("- Database not found after cycle.")
+
+          summary_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
 
       - name: Upload learning db
         uses: actions/upload-artifact@v4
