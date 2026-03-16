@@ -167,7 +167,7 @@ jobs:
 
           if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
             git fetch origin gh-pages
-            git worktree add "$TMP_DIR" gh-pages
+            git worktree add -B gh-pages "$TMP_DIR" origin/gh-pages
           else
             git worktree add -b gh-pages "$TMP_DIR" HEAD
           fi
