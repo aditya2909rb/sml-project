@@ -82,6 +82,7 @@ GitHub workflow included:
 - Trains model from prepared dataset.
 - Commits dataset snapshots to the cbioportal-datasets branch.
 - Uploads training artifacts.
+- Runs automatically on push and every 30 minutes on schedule.
 
 ## Configuration
 
