@@ -35,6 +35,8 @@ jobs:
   setup-and-download:
     name: Setup Environment and Download Data
     runs-on: ubuntu-latest
+    outputs:
+      dataset_exists: ${{ steps.dataset_check.outputs.dataset_exists }}
     
     steps:
     - name: Checkout repository
@@ -70,6 +72,7 @@ jobs:
         mkdir -p logs
     
     - name: Download cBioPortal data
+      id: dataset_check
       env:
         TRAINING_MODE: ${{ github.event.inputs.training_mode || 'full' }}
         MAX_STUDIES: ${{ github.event.inputs.max_studies || '5' }}
@@ -84,13 +87,15 @@ jobs:
         if [ -f "data/cbioportal/processed/combined_training_dataset.json" ]; then
           echo "cBioPortal data download completed successfully"
           echo "DATASET_EXISTS=true" >> $GITHUB_ENV
+          echo "dataset_exists=true" >> $GITHUB_OUTPUT
         else
           echo "cBioPortal data download failed or no data available"
           echo "DATASET_EXISTS=false" >> $GITHUB_ENV
+          echo "dataset_exists=false" >> $GITHUB_OUTPUT
         fi
     
     - name: Upload cBioPortal data as artifact
-      if: env.DATASET_EXISTS == 'true'
+      if: ${{ steps.dataset_check.outputs.dataset_exists == 'true' }}
       uses: actions/upload-artifact@v4
       with:
         name: cbioportal-dataset
@@ -163,7 +168,7 @@ EOF
     name: Train Cancer Vaccine Model
     runs-on: ubuntu-latest
     needs: [setup-and-download, github-training]
-    if: env.DATASET_EXISTS == 'true'
+    if: ${{ needs.setup-and-download.outputs.dataset_exists == 'true' }}
     
     steps:
     - name: Checkout repository
