@@ -9,7 +9,7 @@ on:
       - main
   workflow_dispatch:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/30 * * * *"
 
 concurrency:
   group: sml-continuous-learning
@@ -22,10 +22,23 @@ jobs:
       SML_PERSIST_ENABLED: "true"
       SML_STATE_BRANCH: sml-learning-state
       SML_PERSIST_EVERY_CYCLES: "1"
+      SML_PERSIST_MIN_BATCH_ACCURACY: "0.0"
+      SML_PERSIST_RECENT_WINDOW: "1"
+      SML_PERSIST_RECENT_MIN_AVG_ACCURACY: "0.0"
+      SML_PERSIST_MIN_TRAINED_SAMPLES: "0"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Restore persisted state from branch
+        run: |
+          if git ls-remote --exit-code --heads origin "$SML_STATE_BRANCH" >/dev/null 2>&1; then
+            git fetch origin "$SML_STATE_BRANCH"
+            git checkout "origin/$SML_STATE_BRANCH" -- sml_state.sqlite3 model_store || true
+          else
+            echo "No persisted state branch found yet; starting fresh."
+          fi
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -53,8 +66,15 @@ jobs:
           path: sml_state.sqlite3
           if-no-files-found: warn
 
+      - name: Upload model store
+        uses: actions/upload-artifact@v4
+        with:
+          name: sml-model-store
+          path: model_store
+          if-no-files-found: warn
+
   train-self-hosted-continuous:
-    if: github.event_name == 'push'
+    if: vars.SML_USE_SELF_HOSTED == 'true' && github.event_name == 'push'
     runs-on: self-hosted
     env:
       SML_PERSIST_ENABLED: "true"

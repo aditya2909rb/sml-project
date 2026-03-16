@@ -60,8 +60,16 @@ You can watch local progress from your own machine with Streamlit (`dashboard.py
 The workflow in `.github/workflows/continuous-learning.yml` now triggers on:
 
 1. Push to `main` (starts immediately)
-2. Every 5 minutes (`cron`)
+2. Every 30 minutes (`cron`)
 3. Manual run (`workflow_dispatch`)
+
+For GitHub-hosted runs, each new VM now resumes from previous state automatically:
+
+1. Restore `sml_state.sqlite3` and `model_store/` from `sml-learning-state`
+2. Run one training cycle
+3. Persist updated state back to `sml-learning-state`
+
+This means each scheduled run continues from where the previous VM stopped.
 
 ## No-limit runtime on GitHub
 
@@ -73,13 +81,15 @@ For continuous no-time-limit behavior, use a **self-hosted runner**:
 2. Keep that runner online.
 3. Push to `main`.
 
-The workflow includes a `train-self-hosted-continuous` job that starts:
+The workflow includes an optional `train-self-hosted-continuous` job that starts:
 
 ```bash
 python main.py run-loop --sleep-seconds 30
 ```
 
 This keeps learning from live internet feeds continuously until you stop the runner.
+
+Enable it by setting repository variable `SML_USE_SELF_HOSTED=true`.
 
 ## Automatic parameter growth
 
