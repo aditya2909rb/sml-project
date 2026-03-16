@@ -1,5 +1,8 @@
 name: OncoSML Cancer Training Pipeline
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [main]
@@ -26,6 +29,7 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  SML_CBIOPORTAL_DATA_BRANCH: cbioportal-datasets
 
 jobs:
   setup-and-download:
@@ -209,6 +213,56 @@ jobs:
           path: data/cbioportal/processed/dataset_diagnostics.json
           if-no-files-found: warn
           retention-days: 30
+
+  persist-cbioportal-datasets:
+    name: Persist cBioPortal Datasets Branch
+    runs-on: ubuntu-latest
+    needs: setup-and-download
+    if: ${{ needs['setup-and-download'].outputs.dataset_exists == 'true' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download cBioPortal artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cbioportal-dataset
+          path: /tmp/cbioportal-artifact
+
+      - name: Commit dataset snapshot to branch
+        env:
+          DATA_BRANCH: ${{ env.SML_CBIOPORTAL_DATA_BRANCH }}
+        run: |
+          set -euo pipefail
+
+          git config user.email "sml-bot@users.noreply.github.com"
+          git config user.name "sml-bot"
+
+          git fetch origin "$DATA_BRANCH" || true
+
+          if git ls-remote --exit-code --heads origin "$DATA_BRANCH" >/dev/null 2>&1; then
+            git checkout -B "$DATA_BRANCH" "origin/$DATA_BRANCH"
+          else
+            git checkout --orphan "$DATA_BRANCH"
+            git rm -rf . >/dev/null 2>&1 || true
+          fi
+
+          rm -rf data/cbioportal
+          mkdir -p data
+          cp -a /tmp/cbioportal-artifact/data/cbioportal data/cbioportal
+
+          git add -A data/cbioportal
+          if git diff --cached --quiet; then
+            echo "No dataset changes to commit."
+            exit 0
+          fi
+
+          ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          git commit -m "chore(cbioportal): dataset snapshot $ts"
+          git push -u origin "$DATA_BRANCH"
 
   github-training:
     name: GitHub Repository Training
