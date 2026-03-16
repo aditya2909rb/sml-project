@@ -1,13 +1,13 @@
 # OncoSML: Cancer Vaccine Learning System
 
 OncoSML is a self-maintaining machine learning system for cancer-vaccine research workflows.
-It combines cBioPortal genomics ingestion, continuous GitHub learning, model training, safety checks, and live monitoring.
+Its primary GitHub automation path downloads cBioPortal datasets, stores dataset snapshots, trains on those datasets, and exposes status tracking.
 
 ## What This Project Does
 
 - Downloads and processes cancer genomics data from cBioPortal.
-- Learns continuously from selected GitHub repositories.
-- Trains text plus DNA-oriented model components.
+- Trains automatically on cBioPortal-derived datasets on GitHub.
+- Optionally runs a separate manual text-learning loop for experimentation.
 - Applies guarded self-healing (lint/format only) when checks fail.
 - Tracks training cycles, events, and model growth in SQLite.
 - Exposes status endpoints and a local Streamlit dashboard.
@@ -19,8 +19,8 @@ It combines cBioPortal genomics ingestion, continuous GitHub learning, model tra
 - scripts/download_cbioportal_data.py: cBioPortal data download and processing
 - main.py: CLI entrypoint
 - dashboard.py: Streamlit tracker UI
-- .github/workflows/continuous-learning.yml: continuous loop automation
-- .github/workflows/cancer-vaccine-training.yml: cBioPortal plus model-training pipeline
+- .github/workflows/cancer-vaccine-training.yml: automatic cBioPortal download, dataset persistence, and training pipeline
+- .github/workflows/continuous-learning.yml: optional manual text-learning workflow
 
 ## Quick Start (Windows PowerShell)
 
@@ -76,16 +76,17 @@ python main.py run-service --sleep-seconds 30 --host 127.0.0.1 --port 8787
 
 Two workflows are included:
 
-1. OncoSML Continuous Learning
-- Triggered on push to main, schedule, and manual dispatch.
-- Runs learning cycles and uploads monitoring artifacts.
-
-2. OncoSML Cancer Training Pipeline
+1. OncoSML Cancer Training Pipeline
 - Downloads cBioPortal data.
 - Prepares combined dataset with diagnostics and fallbacks.
 - Runs GitHub training.
 - Trains model from prepared dataset.
+- Commits dataset snapshots to the cbioportal-datasets branch.
 - Uploads training artifacts.
+
+2. OncoSML Text Learning Manual
+- Manual-only workflow.
+- Kept for optional experimentation with feed-based text ingestion.
 
 ## Configuration
 

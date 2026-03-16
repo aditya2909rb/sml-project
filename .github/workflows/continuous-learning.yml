@@ -1,15 +1,10 @@
-name: OncoSML Continuous Learning
+name: OncoSML Text Learning Manual
 
 permissions:
   contents: write
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
-  schedule:
-    - cron: "*/30 * * * *"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
@@ -30,17 +25,17 @@ jobs:
       SML_PERSIST_RECENT_MIN_AVG_ACCURACY: "0.0"
       SML_PERSIST_MIN_TRAINED_SAMPLES: "0"
       SML_HN_ENABLED: "true"
-      SML_MAX_ITEMS_PER_FEED: "100"
-      SML_REQUEST_DELAY_SECONDS: "0.2"
-      SML_HN_MAX_ITEMS: "100"
+      SML_MAX_ITEMS_PER_FEED: "50"
+      SML_REQUEST_DELAY_SECONDS: "1.0"
+      SML_HN_MAX_ITEMS: "50"
       SML_REDDIT_ENABLED: "true"
-      SML_REDDIT_SUBREDDITS: "technology,MachineLearning,programming,artificial,datascience"
-      SML_REDDIT_MAX_ITEMS: "60"
+      SML_REDDIT_SUBREDDITS: "technology,MachineLearning,programming"
+      SML_REDDIT_MAX_ITEMS: "30"
       SML_ARXIV_ENABLED: "true"
-      SML_ARXIV_MAX_ITEMS: "80"
+      SML_ARXIV_MAX_ITEMS: "40"
       SML_SOURCE_ALLOWLIST: ""
       SML_SOURCE_BLOCKLIST: ""
-      SML_FEEDS: "https://feeds.bbci.co.uk/news/rss.xml,https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml,https://www.theverge.com/rss/index.xml,https://feeds.arstechnica.com/arstechnica/index,https://www.wired.com/feed/rss,https://hnrss.org/frontpage,https://www.reddit.com/r/MachineLearning/.rss"
+      SML_FEEDS: "https://feeds.bbci.co.uk/news/rss.xml,https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml,https://www.theverge.com/rss/index.xml,https://hnrss.org/frontpage,https://www.reddit.com/r/MachineLearning/.rss"
 
     steps:
       - name: Checkout
