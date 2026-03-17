@@ -419,7 +419,7 @@ jobs:
                       }
                   )
 
-          target_params = 1_000_000_000
+          target_params = 10_000_000_000
           model = CancerVaccineModel("model_store", n_features=262144)
           result = model.train(texts=texts, labels=labels, dna_samples=dna_samples)
           current_budget = model.advance_parameter_budget(target_params=target_params, growth_factor=2.0)
@@ -517,7 +517,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          TARGET=1000000000
+          TARGET=10000000000
 
           # Read current budget from model-state branch via GitHub API + jq
           BUDGET=$(curl -sf \
