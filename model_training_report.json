@@ -4,9 +4,9 @@
   "mutation_detection_accuracy": null,
   "neoantigen_prediction_accuracy": null,
   "vaccine_design_score": null,
-  "estimated_params": 67109120,
+  "estimated_params": 134218240,
   "parameter_target": 1000000000,
   "active_features": 262144,
-  "current_parameter_budget": 67109120,
+  "current_parameter_budget": 134218240,
   "source_dataset": "data/cbioportal/processed/combined_training_dataset.json"
 }
