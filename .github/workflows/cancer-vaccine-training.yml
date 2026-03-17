@@ -270,6 +270,21 @@ jobs:
           mkdir -p data
           cp -a "$SRC_DIR" data/cbioportal
 
+          # Persist run metadata so every successful pipeline creates a traceable snapshot commit.
+          mkdir -p data/cbioportal/processed
+          cat > data/cbioportal/processed/snapshot_meta.json <<EOF
+          {
+            "generated_at_utc": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "workflow": "${GITHUB_WORKFLOW}",
+            "event": "${GITHUB_EVENT_NAME}",
+            "run_id": "${GITHUB_RUN_ID}",
+            "run_number": "${GITHUB_RUN_NUMBER}",
+            "run_attempt": "${GITHUB_RUN_ATTEMPT}",
+            "head_sha": "${GITHUB_SHA}",
+            "ref": "${GITHUB_REF}"
+          }
+          EOF
+
           git add -A data/cbioportal
           if git diff --cached --quiet; then
             echo "No dataset changes to commit."
