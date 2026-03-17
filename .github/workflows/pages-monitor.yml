@@ -67,6 +67,8 @@ jobs:
           python scripts/build_monitor_dashboard.py --db sml_state.sqlite3 --out-dir site
 
       - name: Upload Pages artifact
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
         uses: actions/upload-pages-artifact@v4
         with:
           path: site
@@ -83,4 +85,6 @@ jobs:
     steps:
       - name: Deploy
         id: deployment
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
         uses: actions/deploy-pages@v4
