@@ -425,9 +425,9 @@ jobs:
                   f"Mutation count: {len(mutations)}."
               )
               texts.append(text)
-                try:
+              try:
                   labels.append(int(sample.get("label", 1)))
-                except Exception:
+              except Exception:
                   labels.append(1)
 
               if mutations:
