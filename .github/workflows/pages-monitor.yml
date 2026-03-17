@@ -1,0 +1,99 @@
+name: OncoSML Pages Monitor
+
+on:
+  workflow_run:
+    workflows: ["OncoSML Cancer Training Pipeline"]
+    types: [completed]
+  workflow_dispatch:
+  schedule:
+    - cron: "*/10 * * * *"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Monitor Site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Restore latest training state from branch
+        env:
+          STATE_BRANCH: sml-state
+        run: |
+          set -euo pipefail
+          git fetch origin "$STATE_BRANCH" || true
+          if git ls-remote --exit-code --heads origin "$STATE_BRANCH" >/dev/null 2>&1; then
+            git checkout "origin/$STATE_BRANCH" -- sml_state.sqlite3 || true
+          fi
+          if [ ! -f sml_state.sqlite3 ]; then
+            echo "sml_state.sqlite3 not available from $STATE_BRANCH"
+            exit 1
+          fi
+
+      - name: Build monitor dashboard
+        run: |
+          python scripts/build_monitor_dashboard.py --db sml_state.sqlite3 --out-dir site
+
+      - name: Add GitHub model budget panel script
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          index = Path("site/index.html")
+          html = index.read_text(encoding="utf-8")
+          inject_js = """
+<script>
+(async () => {
+  try {
+    const r = await fetch('https://raw.githubusercontent.com/aditya2909rb/sml-project/github-model-state/model_training_report.json', { cache: 'no-store' });
+    if (!r.ok) return;
+    const p = await r.json();
+    const wrap = document.querySelector('.grid');
+    if (!wrap) return;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<div class="k">GitHub Budget</div><div class="v">${p.estimated_params ?? '-'}</div>`;
+    wrap.appendChild(card);
+  } catch (_) {
+    // Best-effort enhancement for static page.
+  }
+})();
+</script>
+""".strip()
+          if "GitHub Budget" not in html:
+            html = html.replace("</body>", inject_js + "\n</body>")
+            index.write_text(html, encoding="utf-8")
+          PY
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
