@@ -39,6 +39,19 @@ class SMLConfig:
     scale_every_cycles: int
     scale_min_samples: int
     scale_min_accuracy: float
+    # Clinical system configuration
+    clinical_enabled: bool
+    clinical_data_sources: list[str]
+    clinical_api_endpoints: dict[str, str]
+    clinical_data_cache_ttl: int
+    safety_validation_enabled: bool
+    safety_critical_threshold: float
+    safety_warning_threshold: float
+    ethical_compliance_enabled: bool
+    regulatory_compliance_enabled: bool
+    enhanced_biological_model_enabled: bool
+    patient_data_encryption: bool
+    audit_logging_enabled: bool
 
 
 DEFAULT_FEEDS = [
@@ -128,4 +141,40 @@ def load_config() -> SMLConfig:
         scale_every_cycles=int(os.getenv("SML_SCALE_EVERY_CYCLES", "3")),
         scale_min_samples=int(os.getenv("SML_SCALE_MIN_SAMPLES", "80")),
         scale_min_accuracy=float(os.getenv("SML_SCALE_MIN_ACCURACY", "0.62")),
+        # Clinical system configuration
+        clinical_enabled=_parse_bool(os.getenv("SML_CLINICAL_ENABLED"), True),
+        clinical_data_sources=_parse_list(
+            os.getenv("SML_CLINICAL_DATA_SOURCES"),
+            ["EHR", "CLINICAL_TRIALS", "CANCER_REGISTRIES", "BIOMEDICAL_DATABASES"]
+        ),
+        clinical_api_endpoints=_parse_clinical_endpoints(os.getenv("SML_CLINICAL_API_ENDPOINTS")),
+        clinical_data_cache_ttl=int(os.getenv("SML_CLINICAL_DATA_CACHE_TTL", "3600")),
+        safety_validation_enabled=_parse_bool(os.getenv("SML_SAFETY_VALIDATION_ENABLED"), True),
+        safety_critical_threshold=float(os.getenv("SML_SAFETY_CRITICAL_THRESHOLD", "0.8")),
+        safety_warning_threshold=float(os.getenv("SML_SAFETY_WARNING_THRESHOLD", "0.6")),
+        ethical_compliance_enabled=_parse_bool(os.getenv("SML_ETHICAL_COMPLIANCE_ENABLED"), True),
+        regulatory_compliance_enabled=_parse_bool(os.getenv("SML_REGULATORY_COMPLIANCE_ENABLED"), True),
+        enhanced_biological_model_enabled=_parse_bool(os.getenv("SML_ENHANCED_BIOLOGICAL_MODEL_ENABLED"), True),
+        patient_data_encryption=_parse_bool(os.getenv("SML_PATIENT_DATA_ENCRYPTION"), True),
+        audit_logging_enabled=_parse_bool(os.getenv("SML_AUDIT_LOGGING_ENABLED"), True),
     )
+
+
+def _parse_clinical_endpoints(raw: str | None) -> dict[str, str]:
+    """Parse clinical API endpoints configuration."""
+    if not raw:
+        return {
+            "ehr_api": "https://api.ehr.example.com",
+            "clinical_trials_api": "https://clinicaltrials.gov/api/v2/studies",
+            "cancer_registry_api": "https://api.cancerregistry.example.com",
+            "cbioportal_api": "https://www.cbioportal.org/api"
+        }
+    
+    endpoints = {}
+    for item in raw.split(","):
+        item = item.strip()
+        if "=" in item:
+            key, value = item.split("=", 1)
+            endpoints[key.strip()] = value.strip()
+    
+    return endpoints

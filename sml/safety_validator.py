@@ -42,13 +42,15 @@ class ValidationResult:
         return f"[{self.level.value}] {self.message}"
 
 
-class SafetyValidator:
-    """Comprehensive safety and validation system for cancer vaccine AI."""
+class EnhancedSafetyValidator:
+    """Enhanced comprehensive safety and validation system for clinical cancer vaccine AI."""
     
     def __init__(self):
         self.validation_rules = self._load_validation_rules()
         self.safety_checks = self._load_safety_checks()
         self.regulatory_guidelines = self._load_regulatory_guidelines()
+        self.clinical_safety_rules = self._load_clinical_safety_rules()
+        self.ethical_guidelines = self._load_ethical_guidelines()
         
     def _load_validation_rules(self) -> Dict[str, Any]:
         """Load validation rules for different components."""
@@ -128,6 +130,16 @@ class SafetyValidator:
         
         # Basic format validation
         sequence_upper = sequence.upper().strip()
+
+        # Check base composition first so invalid alphabet issues are prioritized.
+        allowed_bases = self.validation_rules['dna_sequence']['allowed_bases']
+        invalid_bases = set(sequence_upper) - allowed_bases
+        if invalid_bases:
+            results.append(ValidationResult(
+                SafetyLevel.CRITICAL,
+                f"Invalid DNA bases found: {invalid_bases}",
+                {'invalid_bases': list(invalid_bases), 'allowed_bases': list(allowed_bases)}
+            ))
         
         # Check length
         if len(sequence_upper) < self.validation_rules['dna_sequence']['min_length']:
@@ -142,16 +154,6 @@ class SafetyValidator:
                 SafetyLevel.CRITICAL,
                 f"DNA sequence too long: {len(sequence_upper)} > {self.validation_rules['dna_sequence']['max_length']}",
                 {'length': len(sequence_upper), 'max_length': self.validation_rules['dna_sequence']['max_length']}
-            ))
-        
-        # Check base composition
-        allowed_bases = self.validation_rules['dna_sequence']['allowed_bases']
-        invalid_bases = set(sequence_upper) - allowed_bases
-        if invalid_bases:
-            results.append(ValidationResult(
-                SafetyLevel.WARNING,
-                f"Invalid DNA bases found: {invalid_bases}",
-                {'invalid_bases': list(invalid_bases), 'allowed_bases': list(allowed_bases)}
             ))
         
         # Check N content
@@ -555,6 +557,54 @@ class SafetyValidator:
         human_sequences = ['ACTB', 'GAPDH', 'HPRT1', 'RPLP0']
         return any(human_seq in sequence for human_seq in human_sequences)
     
+    def _load_clinical_safety_rules(self) -> Dict[str, Any]:
+        """Load clinical safety rules for patient care."""
+        return {
+            'patient_safety': {
+                'max_treatment_intensity': 3,  # 1=low, 2=medium, 3=high
+                'min_response_threshold': 0.3,
+                'max_adverse_event_risk': 0.1,
+                'required_monitoring_frequency': 'weekly'
+            },
+            'data_privacy': {
+                'hipaa_compliance': True,
+                'gdpr_compliance': True,
+                'data_encryption_required': True,
+                'access_logging_required': True
+            },
+            'clinical_trial_safety': {
+                'max_patient_risk_score': 0.7,
+                'required_informed_consent': True,
+                'independent_review_board_required': True,
+                'stopping_rules_required': True
+            }
+        }
+    
+    def _load_ethical_guidelines(self) -> Dict[str, Any]:
+        """Load ethical guidelines for AI in healthcare."""
+        return {
+            'beneficence': {
+                'maximize_benefits': True,
+                'minimize_harms': True,
+                'patient_welfare_first': True
+            },
+            'non_maleficence': {
+                'do_no_harm': True,
+                'avoid_unnecessary_risks': True,
+                'respect_patient_autonomy': True
+            },
+            'justice': {
+                'fair_resource_allocation': True,
+                'avoid_discrimination': True,
+                'equitable_access': True
+            },
+            'transparency': {
+                'explainable_decisions': True,
+                'audit_trail_required': True,
+                'bias_monitoring_required': True
+            }
+        }
+    
     def validate_complete_pipeline(
         self, 
         dna_sequence: str,
@@ -636,7 +686,7 @@ class SafetyValidator:
 # Example usage
 def main():
     """Example of using the safety validator."""
-    validator = SafetyValidator()
+    validator = EnhancedSafetyValidator()
 
     # Example validation data
     dna_seq = "ATCGATCGATCG" * 100  # 1200 bases
