@@ -2,6 +2,7 @@ name: OncoSML Cancer Training Pipeline
 
 permissions:
   contents: write
+  actions: write
 
 on:
   push:
@@ -501,3 +502,42 @@ jobs:
           ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
           git commit -m "chore(model): persist trained state $ts"
           git push -u origin "$STATE_BRANCH"
+
+  trigger-next-run:
+    name: Chain Next Training Run
+    runs-on: ubuntu-latest
+    needs: persist-trained-model-state
+    if: always() && needs.persist-trained-model-state.result == 'success'
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+    steps:
+      - name: Check budget and dispatch next run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          TARGET=1000000000
+
+          # Read current budget from model-state branch via GitHub API + jq
+          BUDGET=$(curl -sf \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${REPO}/contents/model_training_report.json?ref=github-model-state" \
+            | jq -r '.content' | base64 -d | jq -r '.current_parameter_budget // 0' \
+          ) || BUDGET=0
+
+          echo "Current budget: ${BUDGET}  Target: ${TARGET}"
+
+          if [ "${BUDGET}" -ge "${TARGET}" ] 2>/dev/null; then
+            echo "SUCCESS: 1B parameter target reached. Stopping chain."
+          else
+            echo "Budget ${BUDGET} < ${TARGET} - dispatching next run in 30s"
+            sleep 30
+            curl -sf -X POST \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${REPO}/actions/workflows/cancer-vaccine-training.yml/dispatches" \
+              -d '{"ref":"main","inputs":{"training_mode":"full","max_studies":"5"}}'
+            echo "Next training run dispatched."
+          fi
