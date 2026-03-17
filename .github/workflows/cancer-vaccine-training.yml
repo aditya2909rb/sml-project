@@ -236,7 +236,7 @@ jobs:
           name: cbioportal-dataset
           path: /tmp/cbioportal-artifact
 
-      - name: Commit dataset snapshot to branch
+      - name: Commit full dataset archive to branch
         env:
           DATA_BRANCH: ${{ env.SML_CBIOPORTAL_DATA_BRANCH }}
         run: |
@@ -266,13 +266,20 @@ jobs:
             exit 1
           fi
 
-          rm -rf data/cbioportal
-          mkdir -p data
-          cp -a "$SRC_DIR" data/cbioportal
+          mkdir -p data/cbioportal/runs
 
-          # Persist run metadata so every successful pipeline creates a traceable snapshot commit.
-          mkdir -p data/cbioportal/processed
-          cat > data/cbioportal/processed/snapshot_meta.json <<EOF
+          # Keep latest full dataset at a stable path for easy consumption.
+          rm -rf data/cbioportal/latest
+          cp -a "$SRC_DIR" data/cbioportal/latest
+
+          # Also persist the full dataset for each run so history is retained.
+          RUN_DIR="data/cbioportal/runs/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          rm -rf "$RUN_DIR"
+          cp -a "$SRC_DIR" "$RUN_DIR"
+
+          # Persist run metadata with each archive.
+          mkdir -p "$RUN_DIR/processed" data/cbioportal/latest/processed
+          cat > "$RUN_DIR/processed/snapshot_meta.json" <<EOF
           {
             "generated_at_utc": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
             "workflow": "${GITHUB_WORKFLOW}",
@@ -285,6 +292,8 @@ jobs:
           }
           EOF
 
+          cp "$RUN_DIR/processed/snapshot_meta.json" data/cbioportal/latest/processed/snapshot_meta.json
+
           git add -A data/cbioportal
           if git diff --cached --quiet; then
             echo "No dataset changes to commit."
@@ -292,7 +301,7 @@ jobs:
           fi
 
           ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-          git commit -m "chore(cbioportal): dataset snapshot $ts"
+          git commit -m "chore(cbioportal): full dataset archive $ts"
           git push -u origin "$DATA_BRANCH"
 
   github-training:
