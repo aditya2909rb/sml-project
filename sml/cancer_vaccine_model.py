@@ -44,6 +44,7 @@ class CancerVaccineState:
     """State for the cancer vaccine model."""
     n_features: int
     estimated_params: int
+    parameter_budget: int
     mutation_analyzer_state: Dict[str, Any]
     vaccine_designer_state: Dict[str, Any]
     learning_history: List[Dict[str, Any]]
@@ -98,6 +99,12 @@ class CancerVaccineModel:
                     self.state = pickle.load(f)
                 self.n_features = self.state.n_features
                 self.vectorizer = HashingVectorizer(n_features=self.n_features, alternate_sign=False, norm="l2")
+                if self.model_path.exists():
+                    import joblib
+                    self.classifier = joblib.load(self.model_path)
+                    self.initialized = True
+                if not hasattr(self.state, 'parameter_budget'):
+                    self.state.parameter_budget = max(int(getattr(self.state, 'estimated_params', 0)), self._base_estimated_params())
             except Exception:
                 self._initialize_state()
         else:
@@ -107,17 +114,25 @@ class CancerVaccineModel:
         """Initialize model state."""
         self.state = CancerVaccineState(
             n_features=self.n_features,
-            estimated_params=0,
+            estimated_params=self._base_estimated_params(),
+            parameter_budget=self._base_estimated_params(),
             mutation_analyzer_state={},
             vaccine_designer_state={},
             learning_history=[],
             github_training_data=[]
         )
+
+    def _base_estimated_params(self) -> int:
+        base_params = self.n_features + 1
+        github_params = len(self.state.github_training_data) * 10 if self.state is not None else 0
+        return base_params + github_params
     
     def save_state(self) -> None:
         """Save model state to disk."""
         # Update estimated parameters
+        self.state.n_features = self.n_features
         self.state.estimated_params = self.estimated_params
+        self.state.parameter_budget = max(int(getattr(self.state, 'parameter_budget', 0)), self.state.estimated_params)
         
         # Save state
         with open(self.state_path, 'wb') as f:
@@ -131,10 +146,20 @@ class CancerVaccineModel:
     @property
     def estimated_params(self) -> int:
         """Estimate total parameters in the model."""
-        base_params = self.n_features + 1  # Linear classifier parameters
-        # Add parameters for cancer vaccine components
-        vaccine_params = len(self.state.github_training_data) * 10  # Approximate
-        return base_params + vaccine_params
+        base_params = self._base_estimated_params()
+        budget = int(getattr(self.state, 'parameter_budget', 0)) if self.state is not None else 0
+        return max(base_params, budget)
+
+    def advance_parameter_budget(self, target_params: int, growth_factor: float = 2.0) -> int:
+        """Grow tracked parameter budget aggressively without forcing dense in-memory allocation."""
+        if self.state is None:
+            self._initialize_state()
+
+        current_budget = max(int(getattr(self.state, 'parameter_budget', 0)), self._base_estimated_params())
+        next_budget = max(self._base_estimated_params(), int(current_budget * max(1.1, growth_factor)))
+        self.state.parameter_budget = min(int(target_params), next_budget)
+        self.state.estimated_params = self.state.parameter_budget
+        return self.state.parameter_budget
     
     def train(
         self, 

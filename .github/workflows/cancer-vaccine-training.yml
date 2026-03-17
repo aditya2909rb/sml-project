@@ -30,6 +30,7 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   SML_CBIOPORTAL_DATA_BRANCH: cbioportal-datasets
+  SML_STATE_BRANCH: sml-state
 
 jobs:
   setup-and-download:
@@ -43,6 +44,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -361,6 +364,18 @@ jobs:
           name: cbioportal-dataset
           path: data/cbioportal/
 
+      - name: Restore persisted model state
+        env:
+          STATE_BRANCH: ${{ env.SML_STATE_BRANCH }}
+        run: |
+          set -euo pipefail
+          git fetch origin "$STATE_BRANCH" || true
+          if git ls-remote --exit-code --heads origin "$STATE_BRANCH" >/dev/null 2>&1; then
+            if git cat-file -e "origin/$STATE_BRANCH:model_store" 2>/dev/null; then
+              git checkout "origin/$STATE_BRANCH" -- model_store || true
+            fi
+          fi
+
       - name: Train model from downloaded dataset
         run: |
           python - <<'PY'
@@ -402,8 +417,10 @@ jobs:
                       }
                   )
 
-          model = CancerVaccineModel("model_store", n_features=262144)
+            target_params = 1_000_000_000
+            model = CancerVaccineModel("model_store", n_features=262144)
           result = model.train(texts=texts, labels=labels, dna_samples=dna_samples)
+            current_budget = model.advance_parameter_budget(target_params=target_params, growth_factor=2.0)
           model.save_state()
 
           report = {
@@ -412,6 +429,10 @@ jobs:
               "mutation_detection_accuracy": result.mutation_detection_accuracy,
               "neoantigen_prediction_accuracy": result.neoantigen_prediction_accuracy,
               "vaccine_design_score": result.vaccine_design_score,
+              "estimated_params": model.estimated_params,
+              "parameter_target": target_params,
+              "active_features": model.n_features,
+              "current_parameter_budget": current_budget,
               "source_dataset": str(dataset_path),
           }
           Path("model_training_report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
@@ -426,3 +447,56 @@ jobs:
             model_store/
             model_training_report.json
           retention-days: 90
+
+  persist-trained-model-state:
+    name: Persist Trained Model State
+    runs-on: ubuntu-latest
+    needs: train-cbioportal-model
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Download trained model artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: trained-model
+          path: /tmp/trained-model
+
+      - name: Persist model state to branch
+        env:
+          STATE_BRANCH: ${{ env.SML_STATE_BRANCH }}
+        run: |
+          set -euo pipefail
+
+          git config user.email "sml-bot@users.noreply.github.com"
+          git config user.name "sml-bot"
+
+          git fetch origin "$STATE_BRANCH" || true
+
+          if git ls-remote --exit-code --heads origin "$STATE_BRANCH" >/dev/null 2>&1; then
+            git checkout -B "$STATE_BRANCH" "origin/$STATE_BRANCH"
+          else
+            git checkout --orphan "$STATE_BRANCH"
+            git rm -rf . >/dev/null 2>&1 || true
+          fi
+
+          mkdir -p reports
+          rm -rf model_store
+          cp -a /tmp/trained-model/model_store ./model_store
+          cp /tmp/trained-model/model_training_report.json ./model_training_report.json
+          cp /tmp/trained-model/model_training_report.json ./reports/model_training_report_latest.json
+
+          git add model_store model_training_report.json reports/model_training_report_latest.json
+          if git diff --cached --quiet; then
+            echo "No model state changes to commit."
+            exit 0
+          fi
+
+          ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          git commit -m "chore(model): persist trained state $ts"
+          git push -u origin "$STATE_BRANCH"
