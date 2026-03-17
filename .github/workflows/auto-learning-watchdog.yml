@@ -1,0 +1,72 @@
+name: OncoSML Auto Learning Watchdog
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  ensure-learning-run:
+    name: Ensure Recent Learning Run Exists
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger fallback run when stale
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const workflow_id = 'cancer-vaccine-training.yml';
+            const staleThresholdMinutes = 8;
+
+            const runs = await github.rest.actions.listWorkflowRuns({
+              owner,
+              repo,
+              workflow_id,
+              per_page: 20,
+            });
+
+            const relevant = runs.data.workflow_runs.find((run) =>
+              ['schedule', 'push', 'workflow_dispatch'].includes(run.event),
+            );
+
+            if (!relevant) {
+              core.info('No prior runs found. Dispatching first run.');
+              await github.rest.actions.createWorkflowDispatch({
+                owner,
+                repo,
+                workflow_id,
+                ref: 'main',
+                inputs: {
+                  training_mode: 'quick',
+                  max_studies: '5',
+                },
+              });
+              return;
+            }
+
+            const now = Date.now();
+            const latestMs = Date.parse(relevant.created_at);
+            const ageMinutes = (now - latestMs) / 60000;
+
+            core.info(`Latest run id=${relevant.id} event=${relevant.event} created_at=${relevant.created_at} age_minutes=${ageMinutes.toFixed(2)}`);
+
+            if (ageMinutes > staleThresholdMinutes) {
+              core.info('Run is stale. Dispatching fallback learning run.');
+              await github.rest.actions.createWorkflowDispatch({
+                owner,
+                repo,
+                workflow_id,
+                ref: 'main',
+                inputs: {
+                  training_mode: 'quick',
+                  max_studies: '5',
+                },
+              });
+            } else {
+              core.info('Recent learning run exists. No fallback dispatch needed.');
+            }
