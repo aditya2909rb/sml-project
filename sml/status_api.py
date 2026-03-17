@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
+from urllib.request import Request, urlopen
 
 
 def _utc_now() -> str:
@@ -76,6 +78,37 @@ def _query_stats(db_path: Path) -> dict:
         conn.close()
 
 
+def _fetch_github_model_budget() -> dict | None:
+    repo = os.getenv("SML_GITHUB_REPO", "aditya2909rb/sml-project").strip()
+    branch = os.getenv("SML_GITHUB_MODEL_BRANCH", "github-model-state").strip()
+    if not repo or "/" not in repo:
+        return None
+
+    url = f"https://raw.githubusercontent.com/{repo}/{branch}/model_training_report.json"
+    req = Request(url, headers={"User-Agent": "OncoSML-Status/1.0"})
+    try:
+        with urlopen(req, timeout=4) as resp:  # noqa: S310
+            payload = json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        return None
+
+    estimated = payload.get("estimated_params")
+    target = payload.get("parameter_target")
+    progress_percent = None
+    if isinstance(estimated, (int, float)) and isinstance(target, (int, float)) and target > 0:
+        progress_percent = (float(estimated) / float(target)) * 100.0
+
+    return {
+        "repo": repo,
+        "branch": branch,
+        "estimated_params": estimated,
+        "parameter_target": target,
+        "progress_percent": progress_percent,
+        "trained_samples": payload.get("trained_samples"),
+        "batch_accuracy": payload.get("batch_accuracy"),
+    }
+
+
 def build_status(db_path: Path) -> dict:
     latest = _query_one(
         db_path,
@@ -103,6 +136,7 @@ def build_status(db_path: Path) -> dict:
         progress_percent = (
             float(model_progress["estimated_params"]) / float(model_progress["target_params"])
         ) * 100.0
+    github_model_state = _fetch_github_model_budget()
 
     return {
         "now_utc": _utc_now(),
@@ -113,6 +147,7 @@ def build_status(db_path: Path) -> dict:
         "latest_cycle": latest,
         "latest_model_progress": model_progress,
         "parameter_progress_percent": progress_percent,
+        "github_model_state": github_model_state,
     }
 
 
@@ -207,6 +242,7 @@ def make_handler(db_path: Path):
                 <div class="card" style="padding:12px;"><div class="muted">Latest New Samples</div><div id="latestNew">-</div></div>
                 <div class="card" style="padding:12px;"><div class="muted">Latest Accuracy</div><div id="latestAcc">-</div></div>
                 <div class="card" style="padding:12px;"><div class="muted">Param Progress</div><div id="paramProgress">-</div></div>
+                <div class="card" style="padding:12px;"><div class="muted">GitHub Budget</div><div id="githubBudget">-</div></div>
             </div>
             <pre id="json">Loading status...</pre>
         </div>
@@ -224,10 +260,13 @@ def make_handler(db_path: Path):
                 document.getElementById('latestNew').textContent = String(status.latest_cycle?.new_samples ?? '-');
                 document.getElementById('latestAcc').textContent = status.latest_cycle?.batch_accuracy == null ? 'n/a' : String(status.latest_cycle.batch_accuracy);
                 document.getElementById('paramProgress').textContent = status.parameter_progress_percent == null ? 'n/a' : `${status.parameter_progress_percent.toFixed(6)}%`;
+                const gh = status.github_model_state;
+                document.getElementById('githubBudget').textContent = gh?.estimated_params == null ? 'n/a' : String(gh.estimated_params);
                 document.getElementById('json').textContent = JSON.stringify(status, null, 2);
             } catch (err) {
                 document.getElementById('health').textContent = 'error';
                 document.getElementById('health').className = 'muted';
+                document.getElementById('githubBudget').textContent = 'n/a';
                 document.getElementById('json').textContent = String(err);
             }
         }
