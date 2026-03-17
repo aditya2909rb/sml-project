@@ -425,7 +425,10 @@ jobs:
                   f"Mutation count: {len(mutations)}."
               )
               texts.append(text)
-              labels.append(int(sample.get("label", 1)))
+                try:
+                  labels.append(int(sample.get("label", 1)))
+                except Exception:
+                  labels.append(1)
 
               if mutations:
                   dna_samples.append(
@@ -443,7 +446,7 @@ jobs:
           current_budget = model.advance_parameter_budget(target_params=target_params, growth_factor=2.0)
           model.save_state()
 
-            record_model_progress(
+          record_model_progress(
               db_path=db_path,
               cycle_id=cycle_id,
               n_features=model.n_features,
@@ -451,8 +454,8 @@ jobs:
               target_params=target_params,
               scaled_up=False,
               scale_note=f"budget advanced to {current_budget}",
-            )
-            log_event(
+          )
+          log_event(
               db_path,
               "INFO",
               "model_budget",
@@ -461,8 +464,8 @@ jobs:
                 "estimated_params": model.estimated_params,
                 "target_params": target_params,
               },
-            )
-            end_cycle(
+          )
+          end_cycle(
               db_path=db_path,
               cycle_id=cycle_id,
               status="ok",
@@ -470,7 +473,7 @@ jobs:
               trained_samples=result.trained_samples,
               batch_accuracy=result.batch_accuracy,
               notes="github pipeline cycle completed",
-            )
+          )
 
           report = {
               "trained_samples": result.trained_samples,
