@@ -1,6 +1,8 @@
 name: OncoSML Pages Monitor
 
 on:
+  push:
+    branches: [main]
   workflow_run:
     workflows: ["OncoSML Cancer Training Pipeline"]
     types: [completed]
@@ -49,37 +51,6 @@ jobs:
       - name: Build monitor dashboard
         run: |
           python scripts/build_monitor_dashboard.py --db sml_state.sqlite3 --out-dir site
-
-      - name: Add GitHub model budget panel script
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          index = Path("site/index.html")
-          html = index.read_text(encoding="utf-8")
-          inject_js = """
-<script>
-(async () => {
-  try {
-    const r = await fetch('https://raw.githubusercontent.com/aditya2909rb/sml-project/github-model-state/model_training_report.json', { cache: 'no-store' });
-    if (!r.ok) return;
-    const p = await r.json();
-    const wrap = document.querySelector('.grid');
-    if (!wrap) return;
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `<div class="k">GitHub Budget</div><div class="v">${p.estimated_params ?? '-'}</div>`;
-    wrap.appendChild(card);
-  } catch (_) {
-    // Best-effort enhancement for static page.
-  }
-})();
-</script>
-""".strip()
-          if "GitHub Budget" not in html:
-            html = html.replace("</body>", inject_js + "\n</body>")
-            index.write_text(html, encoding="utf-8")
-          PY
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
