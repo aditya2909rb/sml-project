@@ -31,6 +31,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
   SML_CBIOPORTAL_DATA_BRANCH: cbioportal-datasets
   SML_STATE_BRANCH: sml-state
+  SML_TRAINED_MODEL_BRANCH: github-model-state
 
 jobs:
   setup-and-download:
@@ -366,7 +367,7 @@ jobs:
 
       - name: Restore persisted model state
         env:
-          STATE_BRANCH: ${{ env.SML_STATE_BRANCH }}
+          STATE_BRANCH: ${{ env.SML_TRAINED_MODEL_BRANCH }}
         run: |
           set -euo pipefail
           git fetch origin "$STATE_BRANCH" || true
@@ -469,7 +470,7 @@ jobs:
 
       - name: Persist model state to branch
         env:
-          STATE_BRANCH: ${{ env.SML_STATE_BRANCH }}
+          STATE_BRANCH: ${{ env.SML_TRAINED_MODEL_BRANCH }}
         run: |
           set -euo pipefail
 
