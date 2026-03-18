@@ -222,6 +222,51 @@ class EnhancedSafetyValidator:
                 f"Neoantigen too long: {len(neoantigen)} > {self.validation_rules['neoantigen']['max_length']}",
                 {'length': len(neoantigen), 'max_length': self.validation_rules['neoantigen']['max_length']}
             ))
+
+        # --- Stricter biological gates ---
+
+        # MHC-I optimal presentation length (8-11 aa); warn outside this range.
+        if not (8 <= len(neoantigen) <= 11):
+            results.append(ValidationResult(
+                SafetyLevel.WARNING,
+                f"Neoantigen length {len(neoantigen)} aa is outside optimal MHC-I range (8-11 aa)",
+                {'length': len(neoantigen), 'optimal_range': '8-11'}
+            ))
+
+        # Predicted MHC binding affinity gate (IC50, nM; lower is stronger).
+        binding_affinity = mutation_info.get('binding_affinity_nm')
+        if binding_affinity is not None:
+            if binding_affinity > 500.0:
+                results.append(ValidationResult(
+                    SafetyLevel.CRITICAL,
+                    f"Predicted MHC binding affinity too weak for immune presentation: "
+                    f"{binding_affinity:.1f} nM > 500 nM threshold",
+                    {'binding_affinity_nm': binding_affinity, 'threshold_nm': 500.0}
+                ))
+            elif binding_affinity > 200.0:
+                results.append(ValidationResult(
+                    SafetyLevel.WARNING,
+                    f"Moderate MHC binding affinity; weak immune presentation predicted: "
+                    f"{binding_affinity:.1f} nM (200-500 nM range)",
+                    {'binding_affinity_nm': binding_affinity, 'strong_threshold_nm': 200.0}
+                ))
+
+        # Predicted immunogenicity gate.
+        immunogenicity = mutation_info.get('immunogenicity_score')
+        if immunogenicity is not None:
+            if immunogenicity < 0.3:
+                results.append(ValidationResult(
+                    SafetyLevel.CRITICAL,
+                    f"Predicted immunogenicity score below minimum threshold: "
+                    f"{immunogenicity:.3f} < 0.30",
+                    {'immunogenicity_score': immunogenicity, 'min_threshold': 0.3}
+                ))
+            elif immunogenicity < 0.5:
+                results.append(ValidationResult(
+                    SafetyLevel.WARNING,
+                    f"Borderline immunogenicity score: {immunogenicity:.3f} (0.30-0.50 range)",
+                    {'immunogenicity_score': immunogenicity, 'strong_threshold': 0.5}
+                ))
         
         # Check amino acid composition
         allowed_aas = self.validation_rules['neoantigen']['allowed_amino_acids']
@@ -280,24 +325,23 @@ class EnhancedSafetyValidator:
     def validate_mrna_sequence(self, sequence: str, construct_info: Dict[str, Any]) -> List[ValidationResult]:
         """Validate mRNA sequence safety and quality."""
         results = []
-        
-        # Basic validation
+
         sequence_upper = sequence.upper().strip()
-        
+
         if len(sequence_upper) < self.validation_rules['mrna_sequence']['min_length']:
             results.append(ValidationResult(
                 SafetyLevel.CRITICAL,
                 f"mRNA sequence too short: {len(sequence_upper)} < {self.validation_rules['mrna_sequence']['min_length']}",
                 {'length': len(sequence_upper), 'min_length': self.validation_rules['mrna_sequence']['min_length']}
             ))
-        
+
         if len(sequence_upper) > self.validation_rules['mrna_sequence']['max_length']:
             results.append(ValidationResult(
                 SafetyLevel.CRITICAL,
                 f"mRNA sequence too long: {len(sequence_upper)} > {self.validation_rules['mrna_sequence']['max_length']}",
                 {'length': len(sequence_upper), 'max_length': self.validation_rules['mrna_sequence']['max_length']}
             ))
-        
+
         # Check base composition
         allowed_bases = self.validation_rules['mrna_sequence']['allowed_bases']
         invalid_bases = set(sequence_upper) - allowed_bases
@@ -307,25 +351,28 @@ class EnhancedSafetyValidator:
                 f"Invalid RNA bases found: {invalid_bases}",
                 {'invalid_bases': list(invalid_bases), 'allowed_bases': list(allowed_bases)}
             ))
-        
+
+        if not sequence_upper:
+            return results
+
         # Check GC content
         gc_count = sequence_upper.count('G') + sequence_upper.count('C')
         gc_content = gc_count / len(sequence_upper)
-        
+
         if gc_content < self.validation_rules['mrna_sequence']['min_gc_content']:
             results.append(ValidationResult(
                 SafetyLevel.WARNING,
                 f"mRNA GC content too low: {gc_content:.2%} < {self.validation_rules['mrna_sequence']['min_gc_content']:.2%}",
                 {'gc_content': gc_content, 'min_gc_content': self.validation_rules['mrna_sequence']['min_gc_content']}
             ))
-        
+
         if gc_content > self.validation_rules['mrna_sequence']['max_gc_content']:
             results.append(ValidationResult(
                 SafetyLevel.WARNING,
                 f"mRNA GC content too high: {gc_content:.2%} > {self.validation_rules['mrna_sequence']['max_gc_content']:.2%}",
                 {'gc_content': gc_content, 'max_gc_content': self.validation_rules['mrna_sequence']['max_gc_content']}
             ))
-        
+
         # Check for repetitive motifs
         repeated_motifs = self._count_repeated_motifs(sequence_upper)
         if repeated_motifs > self.validation_rules['mrna_sequence']['max_repeated_motifs']:
@@ -334,7 +381,7 @@ class EnhancedSafetyValidator:
                 f"Too many repeated motifs: {repeated_motifs} > {self.validation_rules['mrna_sequence']['max_repeated_motifs']}",
                 {'repeated_motifs': repeated_motifs, 'max_repeated_motifs': self.validation_rules['mrna_sequence']['max_repeated_motifs']}
             ))
-        
+
         # Check self-complementarity
         self_comp = self._calculate_self_complementarity(sequence_upper)
         if self_comp > self.validation_rules['mrna_sequence']['max_self_complementarity']:
@@ -343,7 +390,7 @@ class EnhancedSafetyValidator:
                 f"High self-complementarity: {self_comp:.2%} > {self.validation_rules['mrna_sequence']['max_self_complementarity']:.2%}",
                 {'self_complementarity': self_comp, 'max_self_complementarity': self.validation_rules['mrna_sequence']['max_self_complementarity']}
             ))
-        
+
         # Check for cryptic splice sites
         if self._check_splice_sites(sequence_upper):
             results.append(ValidationResult(
@@ -351,7 +398,7 @@ class EnhancedSafetyValidator:
                 "mRNA contains potential cryptic splice sites",
                 {'sequence': sequence_upper[:100] + "..." if len(sequence_upper) > 100 else sequence_upper}
             ))
-        
+
         # Check for internal ribosome entry sites (IRES)
         if self._check_ires(sequence_upper):
             results.append(ValidationResult(
@@ -359,8 +406,44 @@ class EnhancedSafetyValidator:
                 "mRNA contains potential IRES elements",
                 {'sequence': sequence_upper[:100] + "..." if len(sequence_upper) > 100 else sequence_upper}
             ))
-        
+
+        # --- Stricter biological gates ---
+
+        # CpG density: high obs/expected ratio triggers TLR9-mediated innate immune activation.
+        cpg_count = sequence_upper.count('CG')
+        c_freq = sequence_upper.count('C') / len(sequence_upper)
+        g_freq = sequence_upper.count('G') / len(sequence_upper)
+        expected_cpg = c_freq * g_freq * len(sequence_upper)
+        if expected_cpg > 0:
+            cpg_oe_ratio = cpg_count / expected_cpg
+            if cpg_oe_ratio > 0.6:
+                results.append(ValidationResult(
+                    SafetyLevel.WARNING,
+                    f"High CpG dinucleotide density (obs/exp {cpg_oe_ratio:.2f} > 0.60); "
+                    "may trigger innate immune activation via TLR9",
+                    {'cpg_count': cpg_count, 'cpg_oe_ratio': round(cpg_oe_ratio, 4)}
+                ))
+
+        # Internal stop codon detection across all three reading frames.
+        stop_codons = {'UAA', 'UAG', 'UGA'}
+        premature_stops = []
+        for frame in range(3):
+            for pos in range(frame, len(sequence_upper) - 5, 3):
+                codon = sequence_upper[pos : pos + 3]
+                if codon in stop_codons and pos + 3 < len(sequence_upper) - 3:
+                    premature_stops.append((pos, codon))
+        if premature_stops:
+            first_pos, first_codon = premature_stops[0]
+            results.append(ValidationResult(
+                SafetyLevel.WARNING,
+                f"Premature stop codon {first_codon} at position {first_pos} "
+                f"({len(premature_stops)} occurrence(s) across all frames)",
+                {'premature_stop_count': len(premature_stops),
+                 'first_occurrence': {'position': first_pos, 'codon': first_codon}}
+            ))
+
         return results
+
     
     def validate_vaccine_construct(self, construct_info: Dict[str, Any]) -> List[ValidationResult]:
         """Validate complete vaccine construct."""
@@ -420,7 +503,7 @@ class EnhancedSafetyValidator:
         if dose_recommendation > self.regulatory_guidelines['fda_guidelines']['max_dose']:
             results.append(ValidationResult(
                 SafetyLevel.CRITICAL,
-                f"Recommended dose exceeds FDA limits: {dose_recommendation}μg > {self.regulatory_guidelines['fda_guidelines']['max_dose']}μg",
+                f"Recommended dose exceeds FDA limits: {dose_recommendation}ug > {self.regulatory_guidelines['fda_guidelines']['max_dose']}ug",
                 {'dose': dose_recommendation, 'max_dose': self.regulatory_guidelines['fda_guidelines']['max_dose']}
             ))
         
@@ -606,48 +689,46 @@ class EnhancedSafetyValidator:
         }
     
     def validate_complete_pipeline(
-        self, 
+        self,
         dna_sequence: str,
-        neoantigens: List[str],
-        mrna_construct: Dict[str, Any]
-    ) -> Dict[str, List[ValidationResult]]:
-        """Validate the complete vaccine design pipeline."""
+        neoantigens: list,
+        mrna_construct: dict,
+        neoantigen_metadata=None,
+    ):
+        """Validate the complete vaccine design pipeline.
+
+        Args:
+            neoantigen_metadata: Optional list of per-neoantigen dicts with
+                ``binding_affinity_nm`` and/or ``immunogenicity_score`` keys
+                so stricter per-peptide biological gates can be applied.
+        """
         validation_results = {
             'dna_validation': self.validate_dna_sequence(dna_sequence, "sample_001"),
             'neoantigen_validation': [],
-            'mrna_validation': self.validate_mrna_sequence(mrna_construct.get('sequence', ''), mrna_construct),
-            'construct_validation': self.validate_vaccine_construct(mrna_construct)
+            'mrna_validation': self.validate_mrna_sequence(
+                mrna_construct.get('sequence', ''), mrna_construct
+            ),
+            'construct_validation': self.validate_vaccine_construct(mrna_construct),
         }
-        
-        # Validate each neoantigen
         for i, neoantigen in enumerate(neoantigens):
-            neoantigen_results = self.validate_neoantigen(neoantigen, {'index': i})
-            validation_results['neoantigen_validation'].extend(neoantigen_results)
-        
+            meta = {'index': i}
+            if neoantigen_metadata and i < len(neoantigen_metadata):
+                meta.update(neoantigen_metadata[i])
+            validation_results['neoantigen_validation'].extend(
+                self.validate_neoantigen(neoantigen, meta)
+            )
         return validation_results
-    
-    def generate_safety_report(self, validation_results: Dict[str, List[ValidationResult]]) -> Dict[str, Any]:
-        """Generate comprehensive safety report."""
-        report = {
-            'timestamp': None,
-            'summary': {
-                'total_checks': 0,
-                'critical_issues': 0,
-                'warnings': 0,
-                'passed_checks': 0,
-                'overall_status': 'PASS'
-            },
-            'detailed_results': validation_results,
-            'recommendations': []
-        }
-        
-        # Count results
+
+    def generate_safety_report(self, validation_results):
+        """Generate a JSON-serializable safety report from pipeline validation results."""
         total_checks = 0
         critical_issues = 0
         warnings = 0
         passed_checks = 0
-        
+        serializable_details = {}
+
         for category, results in validation_results.items():
+            serializable_details[category] = []
             for result in results:
                 total_checks += 1
                 if result.level == SafetyLevel.CRITICAL:
@@ -656,19 +737,19 @@ class EnhancedSafetyValidator:
                     warnings += 1
                 else:
                     passed_checks += 1
-        
-        report['summary']['total_checks'] = total_checks
-        report['summary']['critical_issues'] = critical_issues
-        report['summary']['warnings'] = warnings
-        report['summary']['passed_checks'] = passed_checks
-        
-        # Determine overall status
+                serializable_details[category].append({
+                    'level': result.level.value,
+                    'message': result.message,
+                    'details': result.details,
+                })
+
         if critical_issues > 0:
-            report['summary']['overall_status'] = 'CRITICAL'
+            overall_status = 'CRITICAL'
         elif warnings > 5:
-            report['summary']['overall_status'] = 'WARNING'
-        
-        # Generate recommendations
+            overall_status = 'WARNING'
+        else:
+            overall_status = 'PASS'
+
         recommendations = []
         if critical_issues > 0:
             recommendations.append("Address all critical safety issues before proceeding")
@@ -676,14 +757,19 @@ class EnhancedSafetyValidator:
             recommendations.append("Review and address safety warnings")
         if total_checks == 0:
             recommendations.append("No validation checks performed")
-        
-        report['recommendations'] = recommendations
-        report['timestamp'] = None  # Would be set when report is generated
-        
-        return report
 
+        return {
+            'summary': {
+                'total_checks': total_checks,
+                'critical_issues': critical_issues,
+                'warnings': warnings,
+                'passed_checks': passed_checks,
+                'overall_status': overall_status,
+            },
+            'detailed_results': serializable_details,
+            'recommendations': recommendations,
+        }
 
-# Example usage
 def main():
     """Example of using the safety validator."""
     validator = EnhancedSafetyValidator()

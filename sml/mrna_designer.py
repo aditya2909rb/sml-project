@@ -581,7 +581,7 @@ class MRNAVaccineDesigner:
             'optimizations_applied': construct.optimizations_applied,
             'sequence_preview': construct.sequence[:100] + "..." if len(construct.sequence) > 100 else construct.sequence,
             'recommended_dose': self._calculate_recommended_dose(construct),
-            'storage_conditions': "Store at -80°C, avoid freeze-thaw cycles"
+            'storage_conditions': "Store at -80 degC, avoid freeze-thaw cycles"
         }
     
     def _calculate_recommended_dose(self, construct: MRNAConstruct) -> str:
@@ -597,4 +597,4 @@ class MRNAVaccineDesigner:
         
         recommended_dose = base_dose * dose_factor
         
-        return f"{recommended_dose:.0f} μg per dose"
+        return f"{recommended_dose:.0f} ug per dose"
