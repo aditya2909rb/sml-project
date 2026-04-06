@@ -1,90 +1,109 @@
 # OncoSML: Cancer Vaccine Learning System
 
-OncoSML is a research-grade, end-to-end machine learning pipeline for personalized cancer vaccine exploration.
-It combines sequence-based mutation analysis, neoantigen selection, mRNA construct design, and multi-stage safety validation.
+OncoSML is an end-to-end research platform for personalized cancer vaccine workflow exploration.
+It combines mutation analysis, neoantigen filtering, mRNA construct design, safety validation, and evidence-oriented clinical-readiness tooling.
 
-## Core Capabilities
+## What This Repository Delivers
 
-- DNA normal-vs-tumor analysis and mutation extraction
-- Neoantigen candidate scoring (binding affinity, immunogenicity, stability)
-- mRNA vaccine construct generation and optimization
-- Strict biological safety validation gates with JSON reports
-- Clinical workflow demo and command-line submission pipeline
-- Real-world genomics stack orchestration (FASTQ/BAM/VCF-driven, toolchain hooks)
-- Streamlit dashboard and lightweight status API
+- FASTA-based normal-vs-tumor workflow for mutation and candidate generation
+- Multi-step decision gates for affinity, immunogenicity, peptide stability, and safety findings
+- JSON-first outputs designed for traceability and downstream reporting
+- Real-world genomics stack orchestration interface (FASTQ/BAM/VCF inputs)
+- Status API and dashboard for runtime visibility
+- Clinical-readiness framework with IQ/OQ/PQ protocols, evidence logs, and execution scripts
 
-## Project Structure
+## High-Level Architecture
 
 ```
-main.py                          # CLI entry point
-examples/clinical_demo.py        # End-to-end clinical run demo
+main.py
+  -> command-line orchestration
+  -> run-patient-pipeline / run-realworld-stack / run-service
+
 sml/
-  dna_analyzer.py                # Mutation and neoantigen analysis
-  mrna_designer.py               # mRNA construct design
-  safety_validator.py            # Safety and biological gate checks
-  patient_pipeline.py            # FASTA -> neoantigen -> mRNA -> JSON decision
-  clinical_genomics_stack.py     # Real-world stack orchestration layer
-  clinical_data_integration.py   # Clinical data integration utilities
-  enhanced_biological_model.py   # Extended biological modeling
-  status_api.py                  # HTTP status endpoints
-  ...
-dashboard.py                     # Streamlit monitoring dashboard
-requirements.txt
-tests/
+  -> domain modules (dna_analyzer, mrna_designer, safety_validator)
+  -> advanced modules (immunogenicity, HLA binding, PK, trial validator)
+  -> compliance/security modules (audit trail, e-signature, privacy, RBAC)
+  -> status API server
+
+validation/
+  -> IQ/OQ/PQ protocols and evidence logs
+  -> executable TS-001..TS-010 evidence scripts
+  -> deployment record templates
+
+docs/
+  -> readiness plans, SOPs, release controls, signoff forms
 ```
 
-## Setup
+## Quick Setup
 
 ### Prerequisites
 
-- Python 3.10+
+- Python 3.11+
 - Git
+- Docker (optional, for container workflows)
 
-### Install
+### Install (Windows PowerShell)
 
-```bash
+```powershell
 python -m venv .venv
-.venv\Scripts\activate
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-## Main Commands
+### Install (bash)
 
-### 1) Run a single learning cycle
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+## CLI Command Reference
+
+### Platform Runtime
 
 ```bash
 python main.py run-once
+python main.py run-loop --sleep-seconds 300
+python main.py run-service --sleep-seconds 300 --host 127.0.0.1 --port 8787
+python main.py serve-status --host 127.0.0.1 --port 8787
 ```
 
-### 2) Run continuous service loop
+### Clinical Demo Commands
 
 ```bash
-python main.py run-service --sleep-seconds 300
+python main.py run-demo --patient-count 5
+python main.py run-clinical --patient-id P001 --enable-safety --enable-modeling
 ```
 
-### 3) Run clinical workflow demo
+### FASTA Pipeline Command (Primary Submission Flow)
 
 ```bash
-python main.py run-clinical
-python main.py run-demo
+python main.py run-patient-pipeline \
+  --sample-id patient_submission \
+  --normal-fasta path/to/normal.fasta \
+  --tumor-fasta path/to/tumor.fasta \
+  --hla-allele HLA-A*02:01 \
+  --output-json outputs/submissions/pipeline_patient_submission.json \
+  --output-mrna-fasta outputs/submissions/patient_submission_mrna_construct.fasta
 ```
 
-### 4) Run patient submission pipeline (FASTA in, mRNA + JSON out)
+Primary outputs:
+
+- `pipeline_<sample_id>.json`
+- `<sample_id>_mrna_construct.fasta` (if construct produced)
+
+### Packaged Submission Mode
 
 ```bash
 python main.py run-submission \
   --sample-id patient_submission \
-  --normal-fasta path/to/normal.fasta \
-  --tumor-fasta path/to/tumor.fasta \
-  --output-dir outputs/submissions
+  --output-root outputs/submissions
 ```
 
-Outputs include:
+### Real-World Stack Orchestration
 
-- `pipeline_<sample_id>.json`
-- `<sample_id>_mrna_construct.fasta`
-
-### 5) Run real-world genomics stack orchestration
+Dry run using pre-called variants:
 
 ```bash
 python main.py run-realworld-stack \
@@ -94,7 +113,7 @@ python main.py run-realworld-stack \
   --dry-run
 ```
 
-For full FASTQ mode:
+FASTQ mode:
 
 ```bash
 python main.py run-realworld-stack \
@@ -110,68 +129,36 @@ Output root:
 
 - `outputs/realworld/<patient_id>/clinical_stack_<patient_id>.json`
 
-## Real-World Stack Stages
+## Status API and Dashboard
 
-The orchestration layer supports staged execution/reporting for:
-
-- Input validation
-- FASTQ quality control and alignment hooks
-- Somatic variant calling/filtering hooks
-- Consequence mapping hooks (VEP)
-- HLA typing hooks (OptiType)
-- MHC prediction hooks (netMHCpan and MHCflurry)
-- Manufacturability and release-QC gate
-
-Each stage is written into a machine-readable report with status and artifact paths.
-
-## Safety and Decision Gates
-
-Pipeline approval can depend on thresholds such as:
-
-- Maximum binding affinity (nM)
-- Minimum immunogenicity score
-- Minimum peptide stability score
-- Maximum warning count
-- Zero critical safety findings
-
-Safety reports are JSON serializable and include:
-
-- Summary counts (`critical_issues`, `warnings`, `passed_checks`)
-- Detailed categorized findings
-- Recommendation list
-
-## Dashboard and API
-
-### Dashboard
+Dashboard:
 
 ```bash
 streamlit run dashboard.py
 ```
 
-### Status API
+Status API:
 
 ```bash
 python main.py serve-status --host 127.0.0.1 --port 8787
 ```
 
-## Testing
+Endpoints:
 
-```bash
-pytest tests -v
-```
+- `/`
+- `/health`
+- `/status`
 
-## Deployment Baseline
+## Deployment Options
 
-Containerized runtime is now supported.
-
-Build and run with Docker:
+### Standard Local Container
 
 ```bash
 docker build -t oncosml:latest .
 docker run --rm -p 8787:8787 oncosml:latest
 ```
 
-Run full local stack with Docker Compose:
+### Multi-Service Compose
 
 ```bash
 docker compose up --build
@@ -182,35 +169,70 @@ Services:
 - Status API: `http://localhost:8787`
 - Dashboard: `http://localhost:8501`
 
-## GMP Manufacturing Framework
+### Clinical Compose Baseline
 
-The patient pipeline emits a machine-readable GMP-oriented release artifact named `gmp_release_record` in pipeline JSON outputs.
+```bash
+docker compose -f docker-compose.clinical.yml up --build
+```
 
-This includes:
+## Testing
 
-- Batch identifier and UTC timestamp
-- GC window check (40%-60%)
-- Sequence traceability hash
-- QA signoff flag and release status
+Run automated tests:
 
-Reference files:
+```bash
+pytest tests -v
+```
 
-- `docs/GMP_MANUFACTURING_FRAMEWORK.md`
-- `templates/gmp_batch_record_template.json`
+## Clinical Validation Toolkit
 
-## Phase 1 Readiness Gate
+The repository includes a technical validation framework for software-layer readiness.
 
-Use the built-in readiness framework to track owners, completion status, objective evidence, and final Go/No-Go decision criteria for trial prep.
+Core documents:
 
-Reference files:
-
+- `validation/IQ_Installation_Qualification.md`
+- `validation/OQ_Operational_Qualification.md`
+- `validation/PQ_Performance_Qualification.md`
+- `validation/IQ_EVIDENCE_LOG.md`
+- `validation/OQ_EVIDENCE_LOG.md`
+- `docs/CLINICAL_READINESS_ACTION_PLAN.md`
+- `docs/ENVIRONMENT_RELEASE_CONTROLS.md`
 - `docs/PHASE1_READINESS_CHECKLIST.md`
-- `templates/phase1_go_no_go_scorecard.json`
+
+Execution scripts:
+
+- `validation/test_scripts/TS-001_Service_Endpoints.py`
+- `validation/test_scripts/TS-002_Patient_Pipeline_Output.py`
+- `validation/test_scripts/TS-003_Backup_Restore_Smoke.py`
+- `validation/test_scripts/TS-004_Access_Control_RBAC.py`
+- `validation/test_scripts/TS-005_Audit_and_ESignature.py`
+- `validation/test_scripts/TS-006_Privacy_Deidentification.py`
+- `validation/test_scripts/TS-007_PQ_Core_Scenarios.py`
+- `validation/test_scripts/TS-008_IQ_Technical_Baseline.py`
+- `validation/test_scripts/TS-009_Incident_Drill_Simulation.py`
+- `validation/test_scripts/TS-010_Operational_Handoff_DryRun.py`
+
+Quickstart:
+
+- `docs/OQ_EXECUTION_QUICKSTART.md`
+
+## GMP and Readiness Assets
+
+- GMP framework: `docs/GMP_MANUFACTURING_FRAMEWORK.md`
+- GMP template: `templates/gmp_batch_record_template.json`
+- Readiness scorecard: `templates/phase1_go_no_go_scorecard.json`
+- Signoff packet: `docs/SIGNOFF_PACKET.md`
+- QA approval sheet: `docs/QA_APPROVAL_SHEET.md`
+- Incident drill worksheet: `docs/INCIDENT_DRILL_WORKSHEET.md`
+
+## Current Readiness Boundary
+
+Software technical groundwork and technical evidence tooling are implemented in-repo.
+Final clinical deployment readiness still depends on external regulated execution steps such as regulatory submissions, GMP manufacturing readiness, nonclinical evidence, governance approvals, and signed QA/clinical documentation.
 
 ## Notes
 
-- The real-world stack command is an orchestration layer and expects external tools to be installed for non-dry-run execution.
-- Dry-run mode is recommended first to validate command wiring and output structure.
+- The real-world stack command is an orchestration layer and expects external tools for non-dry-run execution.
+- Dry-run mode is recommended first to validate toolchain wiring and artifact generation.
 - This repository is intended for research workflows, not clinical diagnosis or treatment decisions.
 
 ## License
