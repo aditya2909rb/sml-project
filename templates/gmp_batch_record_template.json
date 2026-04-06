@@ -1,0 +1,14 @@
+{
+  "batch_id": "GMP-SAMPLE-YYYYMMDDHHMMSS",
+  "sample_id": "SAMPLE_ID",
+  "created_utc": "2026-03-27T00:00:00+00:00",
+  "gc_content": 0.5,
+  "gc_window_pass": true,
+  "mrna_length": 3200,
+  "sterility_check": "PENDING",
+  "endotoxin_check": "PENDING",
+  "identity_check": "PASS",
+  "release_status": "CONDITIONAL_RELEASE",
+  "qa_signoff_required": true,
+  "traceability_hash": "<sha256_of_sequence>"
+}

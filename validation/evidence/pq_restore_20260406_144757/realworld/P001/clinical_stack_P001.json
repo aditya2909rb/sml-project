@@ -1,0 +1,104 @@
+{
+  "patient_id": "P001",
+  "timestamp_utc": "2026-03-18T05:05:28.796000Z",
+  "dry_run": true,
+  "toolchain": {
+    "reference_fasta": "outputs\\hod_final\\hod_submission_final_normal.fasta",
+    "known_sites_vcf": null,
+    "dbsnp_vcf": null,
+    "fastp_bin": "fastp",
+    "bwa_bin": "bwa",
+    "samtools_bin": "samtools",
+    "gatk_bin": "gatk",
+    "bcftools_bin": "bcftools",
+    "vep_bin": "vep",
+    "optitype_bin": "OptiTypePipeline.py",
+    "netmhcpan_bin": "netMHCpan",
+    "mhcflurry_bin": "mhcflurry-predict",
+    "vep_cache_dir": null
+  },
+  "stages": [
+    {
+      "stage": "input_validation",
+      "status": "PASS",
+      "message": "Input mode validated",
+      "timestamp_utc": "2026-03-18T05:05:28.796030Z"
+    },
+    {
+      "stage": "consequence_mapping_vep",
+      "status": "PASS",
+      "message": "Dry-run: command not executed",
+      "timestamp_utc": "2026-03-18T05:05:28.796383Z",
+      "command": [
+        "vep",
+        "--input_file",
+        "outputs\\hod_final\\pipeline_hod_submission_final.json",
+        "--format",
+        "vcf",
+        "--json",
+        "--everything",
+        "--output_file",
+        "outputs\\realworld\\P001\\annotation\\vep_consequences.json",
+        "--offline"
+      ]
+    },
+    {
+      "stage": "hla_typing_optitype",
+      "status": "WARNING",
+      "message": "No tumor reads provided",
+      "timestamp_utc": "2026-03-18T05:05:28.796910Z"
+    },
+    {
+      "stage": "mhc_prediction_netmhcpan",
+      "status": "PASS",
+      "message": "Dry-run: command not executed",
+      "timestamp_utc": "2026-03-18T05:05:28.797613Z",
+      "command": [
+        "netMHCpan",
+        "-p",
+        "outputs\\realworld\\P001\\mhc\\candidate_peptides.tsv",
+        "-a",
+        "HLA-A02:01,HLA-A03:01",
+        "-BA",
+        ">",
+        "outputs\\realworld\\P001\\mhc\\netmhcpan.out"
+      ]
+    },
+    {
+      "stage": "mhc_prediction_mhcflurry",
+      "status": "PASS",
+      "message": "Dry-run: command not executed",
+      "timestamp_utc": "2026-03-18T05:05:28.797636Z",
+      "command": [
+        "mhcflurry-predict",
+        "--alleles",
+        "HLA-A*02:01,HLA-A*03:01",
+        "--peptides",
+        "outputs\\realworld\\P001\\mhc\\candidate_peptides.tsv",
+        "--out",
+        "outputs\\realworld\\P001\\mhc\\mhcflurry.csv"
+      ]
+    },
+    {
+      "stage": "manufacturability_and_release_qc",
+      "status": "PASS",
+      "message": "Critical findings: 0, warnings: 1",
+      "timestamp_utc": "2026-03-18T05:05:28.807430Z"
+    }
+  ],
+  "artifacts": {
+    "tumor_vcf": "outputs\\hod_final\\pipeline_hod_submission_final.json",
+    "consequence_json": "outputs\\realworld\\P001\\annotation\\vep_consequences.json",
+    "hla_typing_json": "outputs\\realworld\\P001\\hla\\hla_typing.json",
+    "mhc_prediction_json": "outputs\\realworld\\P001\\mhc\\mhc_predictions.json",
+    "release_qc_json": "outputs\\realworld\\P001\\release_qc\\release_qc.json"
+  },
+  "release": {
+    "approved_for_release": true,
+    "critical_findings": [],
+    "warnings": [
+      "dna_validation: High repetitive sequence content: 99.67%"
+    ]
+  },
+  "disclaimer": "Research-grade orchestration report. Not a substitute for validated clinical diagnostics, physician judgment, or regulatory-approved release workflows."
+}

@@ -1,0 +1,32 @@
+{
+  "script_id": "TS-002",
+  "generated_at_utc": "2026-04-06T08:58:15+00:00",
+  "command": [
+    "g:/ai new model/.venv/Scripts/python.exe",
+    "main.py",
+    "run-patient-pipeline",
+    "--sample-id",
+    "oq_validation_sample",
+    "--normal-fasta",
+    "outputs/check_demo/check_patient_01_normal.fasta",
+    "--tumor-fasta",
+    "outputs/check_demo/check_patient_01_tumor.fasta",
+    "--output-json",
+    "validation\\evidence\\pipeline_oq_validation_sample.json",
+    "--output-mrna-fasta",
+    "validation\\evidence\\oq_validation_sample_mrna.fasta"
+  ],
+  "checks": {
+    "command_exit_zero": true,
+    "output_json_exists": true,
+    "payload_has_sample_id": true,
+    "payload_has_decision": true,
+    "output_fasta_if_construct": true,
+    "payload_has_gmp_record_if_construct": true,
+    "approved_or_reasoned_rejection": true
+  },
+  "command_returncode": 0,
+  "stdout_tail": "PATIENT PIPELINE REPORT\n==================================================\nSample ID: oq_validation_sample\nApproved for research: False\nSelected neoantigens: 0\nSafety status: N/A\n- No neoantigens passed strict gates: affinity <= 200.0 nM, immunogenicity >= 0.6, stability >= 0.5\n",
+  "stderr_tail": "2026-04-06 14:28:14,414 INFO sml.patient_pipeline Starting patient DNA pipeline\n2026-04-06 14:28:14,462 INFO sml.patient_pipeline Patient DNA pipeline completed\n",
+  "result": "PASS"
+}

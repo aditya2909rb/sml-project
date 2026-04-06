@@ -1,0 +1,372 @@
+{
+  "sample_id": "hod_submission_cmd",
+  "inputs": {
+    "normal_fasta": "outputs\\submissions\\hod_submission_cmd_20260318_090942\\hod_submission_cmd_normal.fasta",
+    "tumor_fasta": "outputs\\submissions\\hod_submission_cmd_20260318_090942\\hod_submission_cmd_tumor.fasta",
+    "hla_allele": "HLA-A*02:01",
+    "normal_length": 15600,
+    "tumor_length": 15600
+  },
+  "mutation_report": {
+    "total_mutations": 5,
+    "driver_mutations": 0,
+    "passenger_mutations": 5,
+    "tumor_mutational_burden": 320.5128205128205,
+    "microsatellite_status": "MSS"
+  },
+  "neoantigen_candidates": [
+    {
+      "peptide": "ERELGRESW",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 472.3665527410147,
+      "immunogenicity_score": 1.0,
+      "stability_score": 0.661625,
+      "mutation_position": 1001,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "MDNDGEFIC",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 472.3665527410147,
+      "immunogenicity_score": 0.8422222222222222,
+      "stability_score": 0.7999999999999998,
+      "mutation_position": 2100,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "KDRFCEQVG",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 606.5306597126335,
+      "immunogenicity_score": 1.0,
+      "stability_score": 0.7895625,
+      "mutation_position": 500,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "QQERGLDQM",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 606.5306597126335,
+      "immunogenicity_score": 1.0,
+      "stability_score": 0.7701875,
+      "mutation_position": 1001,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "PEEWGNIQA",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 606.5306597126335,
+      "immunogenicity_score": 0.8866666666666667,
+      "stability_score": 0.7078125000000001,
+      "mutation_position": 1001,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "PCLLGNWED",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 606.5306597126335,
+      "immunogenicity_score": 0.7255555555555556,
+      "stability_score": 0.7166250000000001,
+      "mutation_position": 1001,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "HKLDTYDIK",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 606.5306597126335,
+      "immunogenicity_score": 1.0,
+      "stability_score": 0.8153750000000001,
+      "mutation_position": 1503,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "DITPTEQCA",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 606.5306597126335,
+      "immunogenicity_score": 0.8477777777777777,
+      "stability_score": 0.8775625,
+      "mutation_position": 1503,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "CKNICPGDR",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 778.8007830714049,
+      "immunogenicity_score": 0.8422222222222222,
+      "stability_score": 0.7528125000000001,
+      "mutation_position": 500,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "DGPACCCTF",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 778.8007830714049,
+      "immunogenicity_score": 0.42333333333333334,
+      "stability_score": 0.856875,
+      "mutation_position": 500,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "IQCVGEFTK",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 778.8007830714049,
+      "immunogenicity_score": 0.7544444444444445,
+      "stability_score": 0.7339375,
+      "mutation_position": 1001,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "QHMGTESTH",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 778.8007830714049,
+      "immunogenicity_score": 1.0,
+      "stability_score": 0.803875,
+      "mutation_position": 1503,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "RHDRCSCFR",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 778.8007830714049,
+      "immunogenicity_score": 1.0,
+      "stability_score": 0.796,
+      "mutation_position": 2700,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "SRWVCETSQ",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 778.8007830714049,
+      "immunogenicity_score": 1.0,
+      "stability_score": 0.7548750000000001,
+      "mutation_position": 2700,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "VYGGCSRTR",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 1000.0,
+      "immunogenicity_score": 0.8455555555555555,
+      "stability_score": 0.7162499999999999,
+      "mutation_position": 500,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "MHPLGQKGM",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 1000.0,
+      "immunogenicity_score": 0.6377777777777778,
+      "stability_score": 0.668375,
+      "mutation_position": 1001,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "MTFGTGKNH",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 1000.0,
+      "immunogenicity_score": 0.8811111111111111,
+      "stability_score": 0.6471874999999999,
+      "mutation_position": 1503,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "NNTMTNRQP",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 1000.0,
+      "immunogenicity_score": 1.0,
+      "stability_score": 0.864,
+      "mutation_position": 1503,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "RTSRGYGMK",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 1000.0,
+      "immunogenicity_score": 1.0,
+      "stability_score": 0.589,
+      "mutation_position": 2100,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "MKTCGNTQH",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 1000.0,
+      "immunogenicity_score": 1.0,
+      "stability_score": 0.8704375000000001,
+      "mutation_position": 2100,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "FGNRGPCWA",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 1000.0,
+      "immunogenicity_score": 0.5833333333333334,
+      "stability_score": 0.5801875000000001,
+      "mutation_position": 2100,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "TPPLGKKMY",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 1000.0,
+      "immunogenicity_score": 0.6966666666666667,
+      "stability_score": 0.8069375,
+      "mutation_position": 2100,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "AYCAGRWHN",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 1000.0,
+      "immunogenicity_score": 0.8811111111111112,
+      "stability_score": 0.6750625,
+      "mutation_position": 2100,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "YSQTGKQNQ",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 1000.0,
+      "immunogenicity_score": 1.0,
+      "stability_score": 0.7276249999999999,
+      "mutation_position": 2100,
+      "mutation_consequence": "passenger"
+    },
+    {
+      "peptide": "IAQACGHYP",
+      "hla_allele": "HLA-A*02:01",
+      "binding_affinity_nm": 1000.0,
+      "immunogenicity_score": 0.5388888888888889,
+      "stability_score": 0.7055000000000001,
+      "mutation_position": 2700,
+      "mutation_consequence": "passenger"
+    }
+  ],
+  "selected_neoantigens": [
+    "ERELGRESW",
+    "MDNDGEFIC"
+  ],
+  "mrna_construct": {
+    "sequence": "GGGCGGGCCGCCACCGCCACCGAGCGCGAGCUGGGCCGGGGCGGCGAGAGCUGGGGCGGGGCGGGCGGGGGCAGGGCGGACGGCAACAUGGCCAACGGGCGGGCCGGCGAGUUCAUUUGCAAGGGGGGCGGCGGUAAAAAAAAAAAAAAAAGAAAAAAAAGAAAAAAGAAAGAAAGAACAAACAAAGGGGCGGGGCGGAAAAAAAAAAAAAAAAAAAAGAAAAACAAAAAAAAAAAAAAAAAACACAAAA",
+    "length": 250,
+    "gc_content": 0.528,
+    "stability_score": 0.6912,
+    "immunogenicity_score": 0.40240000000000004,
+    "delivery_efficiency": 0.5768444444444444,
+    "optimizations_applied": [
+      "Added optimized UTRs",
+      "Added Kozak sequence",
+      "Added poly-A tail",
+      "Optimized for delivery",
+      "Self-learning optimizations applied"
+    ],
+    "5_utr": true,
+    "kozak": true,
+    "coding_sequence": true,
+    "3_utr": true,
+    "poly_a": true,
+    "dose_recommendation": 120
+  },
+  "safety_report": {
+    "summary": {
+      "total_checks": 9,
+      "critical_issues": 0,
+      "warnings": 9,
+      "passed_checks": 0,
+      "overall_status": "WARNING"
+    },
+    "detailed_results": {
+      "dna_validation": [
+        {
+          "level": "WARNING",
+          "message": "High repetitive sequence content: 99.79%",
+          "details": {
+            "repetitive_score": 0.9979322283845735
+          }
+        }
+      ],
+      "neoantigen_validation": [
+        {
+          "level": "WARNING",
+          "message": "Moderate MHC binding affinity; weak immune presentation predicted: 472.4 nM (200-500 nM range)",
+          "details": {
+            "binding_affinity_nm": 472.3665527410147,
+            "strong_threshold_nm": 200.0
+          }
+        },
+        {
+          "level": "WARNING",
+          "message": "Moderate MHC binding affinity; weak immune presentation predicted: 472.4 nM (200-500 nM range)",
+          "details": {
+            "binding_affinity_nm": 472.3665527410147,
+            "strong_threshold_nm": 200.0
+          }
+        }
+      ],
+      "mrna_validation": [
+        {
+          "level": "WARNING",
+          "message": "Too many repeated motifs: 26 > 3",
+          "details": {
+            "repeated_motifs": 26,
+            "max_repeated_motifs": 3
+          }
+        },
+        {
+          "level": "WARNING",
+          "message": "High self-complementarity: 11.20% > 10.00%",
+          "details": {
+            "self_complementarity": 0.112,
+            "max_self_complementarity": 0.1
+          }
+        },
+        {
+          "level": "WARNING",
+          "message": "mRNA contains potential cryptic splice sites",
+          "details": {
+            "sequence": "GGGCGGGCCGCCACCGCCACCGAGCGCGAGCUGGGCCGGGGCGGCGAGAGCUGGGGCGGGGCGGGCGGGGGCAGGGCGGACGGCAACAUGGCCAACGGGC..."
+          }
+        },
+        {
+          "level": "WARNING",
+          "message": "mRNA contains potential IRES elements",
+          "details": {
+            "sequence": "GGGCGGGCCGCCACCGCCACCGAGCGCGAGCUGGGCCGGGGCGGCGAGAGCUGGGGCGGGGCGGGCGGGGGCAGGGCGGACGGCAACAUGGCCAACGGGC..."
+          }
+        },
+        {
+          "level": "WARNING",
+          "message": "High CpG dinucleotide density (obs/exp 1.40 > 0.60); may trigger innate immune activation via TLR9",
+          "details": {
+            "cpg_count": 22,
+            "cpg_oe_ratio": 1.4049
+          }
+        },
+        {
+          "level": "WARNING",
+          "message": "Premature stop codon UAA at position 134 (1 occurrence(s) across all frames)",
+          "details": {
+            "premature_stop_count": 1,
+            "first_occurrence": {
+              "position": 134,
+              "codon": "UAA"
+            }
+          }
+        }
+      ],
+      "construct_validation": []
+    },
+    "recommendations": [
+      "Review and address safety warnings"
+    ]
+  },
+  "decision": {
+    "approved_for_research": true,
+    "reasons": [],
+    "strict_thresholds": {
+      "max_binding_affinity_nm": 500.0,
+      "min_immunogenicity": 0.3,
+      "min_peptide_stability": 0.25,
+      "max_warning_count": 12
+    }
+  }
+}

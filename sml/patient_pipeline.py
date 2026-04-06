@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
 from sml.dna_analyzer import DNAMutationAnalyzer
+from sml.gmp_framework import build_gmp_batch_record
 from sml.mrna_designer import MRNAVaccineDesigner
 from sml.safety_validator import EnhancedSafetyValidator, SafetyLevel
+
+
+logger = logging.getLogger(__name__)
 
 
 def _read_fasta_sequence(path: Path) -> str:
@@ -24,6 +29,9 @@ def _read_fasta_sequence(path: Path) -> str:
     sequence = "".join(sequence_parts).upper()
     if not sequence:
         raise ValueError(f"No sequence content found in FASTA file: {path}")
+    invalid_bases = set(sequence) - {"A", "C", "G", "T", "N"}
+    if invalid_bases:
+        raise ValueError(f"Invalid FASTA bases in {path}: {''.join(sorted(invalid_bases))}")
     return sequence
 
 
@@ -57,19 +65,24 @@ def run_patient_dna_pipeline(
     max_warning_count: int = 3,
 ) -> dict[str, Any]:
     """Run the patient DNA -> neoantigen -> mRNA pipeline with strict safety gates."""
-    normal_dna = _read_fasta_sequence(normal_fasta_path)
-    tumor_dna = _read_fasta_sequence(tumor_fasta_path)
+    logger.info("Starting patient DNA pipeline", extra={"sample_id": sample_id})
+    try:
+        normal_dna = _read_fasta_sequence(normal_fasta_path)
+        tumor_dna = _read_fasta_sequence(tumor_fasta_path)
 
-    analyzer = DNAMutationAnalyzer()
-    mrna_designer = MRNAVaccineDesigner()
-    safety_validator = EnhancedSafetyValidator()
+        analyzer = DNAMutationAnalyzer()
+        mrna_designer = MRNAVaccineDesigner()
+        safety_validator = EnhancedSafetyValidator()
 
-    report = analyzer.analyze_sample(
-        sample_id=sample_id,
-        normal_dna=normal_dna,
-        tumor_dna=tumor_dna,
-        hla_allele=hla_allele,
-    )
+        report = analyzer.analyze_sample(
+            sample_id=sample_id,
+            normal_dna=normal_dna,
+            tumor_dna=tumor_dna,
+            hla_allele=hla_allele,
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("Pipeline failed before neoantigen selection", extra={"sample_id": sample_id})
+        raise RuntimeError(f"Patient pipeline failed for {sample_id}") from exc
 
     neoantigen_candidates: list[dict[str, Any]] = []
     selected_neoantigen_sequences: list[str] = []
@@ -139,6 +152,15 @@ def run_patient_dna_pipeline(
         )
         safety_report = safety_validator.generate_safety_report(validation_results)
         safety_counts = _safety_level_counts(validation_results)
+        logger.info(
+            "Construct generated and validated",
+            extra={
+                "sample_id": sample_id,
+                "gc_content": mrna_construct["gc_content"],
+                "stability_score": mrna_construct["stability_score"],
+                "warnings": safety_counts[SafetyLevel.WARNING.value],
+            },
+        )
 
     decision_reasons: list[str] = []
 
@@ -204,6 +226,9 @@ def run_patient_dna_pipeline(
         },
     }
 
+    if mrna_construct is not None:
+        output["gmp_release_record"] = build_gmp_batch_record(sample_id, mrna_construct)
+
     if output_json_path is None:
         output_json_path = Path("outputs") / f"patient_pipeline_{sample_id}.json"
     output_json_path.parent.mkdir(parents=True, exist_ok=True)
@@ -223,5 +248,15 @@ def run_patient_dna_pipeline(
         "json_report": str(output_json_path),
         "mrna_fasta": str(output_mrna_fasta_path) if output_mrna_fasta_path else None,
     }
+
+    logger.info(
+        "Patient DNA pipeline completed",
+        extra={
+            "sample_id": sample_id,
+            "approved_for_research": approved_for_research,
+            "selected_neoantigen_count": len(selected_neoantigen_sequences),
+            "json_report": str(output_json_path),
+        },
+    )
 
     return output

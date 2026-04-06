@@ -1,0 +1,31 @@
+{
+  "script_id": "TS-005",
+  "generated_at_utc": "2026-04-06T09:06:02+00:00",
+  "checks": {
+    "audit_entry_created": true,
+    "audit_integrity_valid": true,
+    "signature_user_created": true,
+    "signature_created": true,
+    "signature_verifies": true
+  },
+  "audit_integrity": {
+    "valid": true,
+    "message": "Audit trail integrity verified",
+    "entries_checked": 1,
+    "issues": []
+  },
+  "signature_verification": {
+    "valid": true,
+    "message": "Signature valid",
+    "signature_id": "59fa7607342d7459b69f75f1c6471e40",
+    "document_id": "OQ-REC-001",
+    "document_version": "1.0",
+    "signer_name": "QA Reviewer",
+    "signature_meaning": "REVIEWED",
+    "signature_date": "2026-04-06T09:06:02.594513+00:00",
+    "document_modified": false,
+    "original_hash": "b47c148ea59449069fdd8e72717aff383b3a10eb80d1fc97ece834d43281d99e",
+    "current_hash": "b47c148ea59449069fdd8e72717aff383b3a10eb80d1fc97ece834d43281d99e"
+  },
+  "result": "PASS"
+}

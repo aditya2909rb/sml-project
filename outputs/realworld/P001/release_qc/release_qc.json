@@ -1,0 +1,14 @@
+{
+  "critical_findings": [],
+  "warnings": [
+    "dna_validation: High repetitive sequence content: 99.67%"
+  ],
+  "safety_summary": {
+    "total_checks": 1,
+    "critical_issues": 0,
+    "warnings": 1,
+    "passed_checks": 0,
+    "overall_status": "PASS"
+  },
+  "approved_for_release": true
+}

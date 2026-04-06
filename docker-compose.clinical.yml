@@ -1,0 +1,34 @@
+services:
+  oncosml-clinical:
+    build:
+      context: .
+      dockerfile: Dockerfile.clinical
+    environment:
+      SML_LOG_LEVEL: INFO
+      SML_STATUS_HOST: 0.0.0.0
+      SML_STATUS_PORT: 8787
+      ONCOSML_ENV: production
+      ONCOSML_AUDIT_ENABLED: "true"
+      ONCOSML_ENCRYPTION_ENABLED: "true"
+    ports:
+      - "8787:8787"
+    volumes:
+      - ./outputs:/app/outputs
+      - ./model_store:/app/model_store
+      - ./logs_tmp:/app/logs
+    restart: unless-stopped
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["streamlit", "run", "dashboard.py", "--server.address", "0.0.0.0", "--server.port", "8501"]
+    environment:
+      SML_LOG_LEVEL: INFO
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./outputs:/app/outputs
+      - ./model_store:/app/model_store
+    depends_on:
+      - oncosml-clinical

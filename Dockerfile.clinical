@@ -1,0 +1,88 @@
+# Clinical-Grade Docker Image for OncoSML mRNA Vaccine System
+# Compliant with FDA 21 CFR Part 11, HIPAA, and GMP requirements
+
+# Build stage
+FROM python:3.11-slim-bookworm AS builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Runtime stage
+FROM python:3.11-slim-bookworm AS runtime
+
+# Security: Create non-root user
+RUN groupadd -r oncosml && useradd -r -g oncosml oncosml
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    curl \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Copy virtual environment from builder
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Set working directory
+WORKDIR /app
+
+# Copy application code
+COPY --chown=oncosml:oncosml sml/ ./sml/
+COPY --chown=oncosml:oncosml docs/ ./docs/
+COPY --chown=oncosml:oncosml templates/ ./templates/
+COPY --chown=oncosml:oncosml main.py .
+COPY --chown=oncosml:oncosml dashboard.py .
+COPY --chown=oncosml:oncosml requirements.txt .
+
+# Create necessary directories
+RUN mkdir -p /app/logs /app/data /app/audit /app/signatures && \
+    chown -R oncosml:oncosml /app
+
+# Switch to non-root user
+USER oncosml
+
+# Expose port
+EXPOSE 8787
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8787/health || exit 1
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app \
+    ONCOSML_ENV=production \
+    ONCOSML_LOG_LEVEL=INFO \
+    ONCOSML_AUDIT_ENABLED=true \
+    ONCOSML_ENCRYPTION_ENABLED=true
+
+# Labels for tracking and compliance
+LABEL maintainer="OncoSML Clinical Team" \
+      version="1.0.0" \
+      description="OncoSML mRNA Vaccine System - Clinical Grade" \
+      compliance="FDA 21 CFR Part 11, HIPAA, GMP" \
+      build.date="${BUILD_DATE}" \
+      source.commit="${SOURCE_COMMIT}"
+
+# Entry point script
+COPY --chown=oncosml:oncosml docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["python", "main.py", "run-service", "--sleep-seconds", "300", "--host", "0.0.0.0", "--port", "8787"]

@@ -160,6 +160,53 @@ python main.py serve-status --host 127.0.0.1 --port 8787
 pytest tests -v
 ```
 
+## Deployment Baseline
+
+Containerized runtime is now supported.
+
+Build and run with Docker:
+
+```bash
+docker build -t oncosml:latest .
+docker run --rm -p 8787:8787 oncosml:latest
+```
+
+Run full local stack with Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+Services:
+
+- Status API: `http://localhost:8787`
+- Dashboard: `http://localhost:8501`
+
+## GMP Manufacturing Framework
+
+The patient pipeline emits a machine-readable GMP-oriented release artifact named `gmp_release_record` in pipeline JSON outputs.
+
+This includes:
+
+- Batch identifier and UTC timestamp
+- GC window check (40%-60%)
+- Sequence traceability hash
+- QA signoff flag and release status
+
+Reference files:
+
+- `docs/GMP_MANUFACTURING_FRAMEWORK.md`
+- `templates/gmp_batch_record_template.json`
+
+## Phase 1 Readiness Gate
+
+Use the built-in readiness framework to track owners, completion status, objective evidence, and final Go/No-Go decision criteria for trial prep.
+
+Reference files:
+
+- `docs/PHASE1_READINESS_CHECKLIST.md`
+- `templates/phase1_go_no_go_scorecard.json`
+
 ## Notes
 
 - The real-world stack command is an orchestration layer and expects external tools to be installed for non-dry-run execution.

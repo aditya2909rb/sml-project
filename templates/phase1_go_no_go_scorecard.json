@@ -1,0 +1,337 @@
+{
+  "meta": {
+    "program_id": "ONCOSML-PH1",
+    "assessment_date": "2026-04-06",
+    "assessed_by": "System Assessment",
+    "assessment_type": "Comprehensive Gap Analysis",
+    "software_status": "RESEARCH_GRADE_FUNCTIONAL",
+    "clinical_readiness": "NOT_READY"
+  },
+  "owners": {
+    "regulatory_lead": "TBD - CRITICAL GAP",
+    "clinical_lead": "TBD - CRITICAL GAP",
+    "medical_safety_lead": "TBD - CRITICAL GAP",
+    "cmc_gmp_lead": "TBD - CRITICAL GAP",
+    "qa_lead": "TBD - CRITICAL GAP",
+    "software_data_lead": "TBD - CRITICAL GAP",
+    "data_protection_lead": "TBD - CRITICAL GAP"
+  },
+  "weights": {
+    "regulatory_ethics": 0.2,
+    "cmc_gmp": 0.3,
+    "nonclinical": 0.2,
+    "clinical_operations": 0.15,
+    "quality_compliance": 0.1,
+    "software_data_security": 0.05
+  },
+  "status_scale": {
+    "DONE": 1.0,
+    "IN_PROGRESS": 0.5,
+    "NOT_STARTED": 0.0,
+    "BLOCKED": 0.0
+  },
+  "mandatory_items": {
+    "regulatory.ind_cta_strategy": "REQUIRED: DONE - CURRENT: NOT_STARTED",
+    "regulatory.protocol_package": "REQUIRED: DONE - CURRENT: NOT_STARTED",
+    "regulatory.irb_iec_package": "REQUIRED: DONE - CURRENT: NOT_STARTED",
+    "cmc.validated_assays": "REQUIRED: DONE - CURRENT: NOT_STARTED",
+    "cmc.release_specs_qa_approved": "REQUIRED: DONE - CURRENT: NOT_STARTED",
+    "nonclinical.glp_toxicology": "REQUIRED: DONE - CURRENT: NOT_STARTED",
+    "nonclinical.biodistribution": "REQUIRED: DONE - CURRENT: NOT_STARTED",
+    "clinical.dsmb_safety_reporting": "REQUIRED: DONE - CURRENT: NOT_STARTED"
+  },
+  "workstreams": {
+    "regulatory_ethics": {
+      "status": "NO_GO",
+      "score": 0.0,
+      "items": {
+        "ind_cta_strategy": {
+          "status": "NOT_STARTED",
+          "gap_description": "No regulatory pathway defined (FDA IND vs EMA CTA)",
+          "required_evidence": "Regulatory strategy document, pre-IND meeting request",
+          "priority": "CRITICAL"
+        },
+        "scientific_advice_meeting": {
+          "status": "NOT_STARTED",
+          "gap_description": "No regulatory agency interactions scheduled",
+          "required_evidence": "Meeting minutes, scientific advice letter",
+          "priority": "HIGH"
+        },
+        "protocol_package": {
+          "status": "NOT_STARTED",
+          "gap_description": "No clinical protocol, Investigator Brochure, or informed consent drafted",
+          "required_evidence": "Draft protocol v0.1, IB outline, ICF template",
+          "priority": "CRITICAL"
+        },
+        "irb_iec_package": {
+          "status": "NOT_STARTED",
+          "gap_description": "No ethics committee submissions prepared",
+          "required_evidence": "IRB/IEC submission package, approval letters",
+          "priority": "CRITICAL"
+        },
+        "trial_registration_plan": {
+          "status": "NOT_STARTED",
+          "gap_description": "No ClinicalTrials.gov or EUCTR registration planned",
+          "required_evidence": "Registration protocol, timeline",
+          "priority": "MEDIUM"
+        }
+      },
+      "evidence": [],
+      "critical_gaps": [
+        "No IND/CTA regulatory strategy",
+        "No clinical protocol or Investigator Brochure",
+        "No IRB/IEC ethics submission package"
+      ]
+    },
+    "cmc_gmp": {
+      "status": "NO_GO",
+      "score": 0.0,
+      "items": {
+        "gmp_process_frozen": {
+          "status": "NOT_STARTED",
+          "gap_description": "No GMP batch record v1.0 exists",
+          "required_evidence": "GMP batch record, manufacturing SOPs",
+          "priority": "CRITICAL"
+        },
+        "cqa_cpp_approved": {
+          "status": "NOT_STARTED",
+          "gap_description": "Critical quality attributes and process parameters undefined",
+          "required_evidence": "CQA/CPP document, risk assessment",
+          "priority": "HIGH"
+        },
+        "validated_assays": {
+          "status": "NOT_STARTED",
+          "gap_description": "No validated methods for identity, purity, potency, sterility, endotoxin",
+          "required_evidence": "Validation protocols, certificates of analysis",
+          "priority": "CRITICAL"
+        },
+        "stability_program": {
+          "status": "NOT_STARTED",
+          "gap_description": "No accelerated or real-time stability studies initiated",
+          "required_evidence": "Stability protocol, real-time data",
+          "priority": "HIGH"
+        },
+        "release_specs_qa_approved": {
+          "status": "NOT_STARTED",
+          "gap_description": "No QA-approved release criteria",
+          "required_evidence": "Release specifications, QA approval signatures",
+          "priority": "CRITICAL"
+        },
+        "deviation_capa_workflow": {
+          "status": "NOT_STARTED",
+          "gap_description": "No quality management system for deviations",
+          "required_evidence": "CAPA SOP, deviation logs",
+          "priority": "HIGH"
+        }
+      },
+      "evidence": [],
+      "critical_gaps": [
+        "No GMP manufacturing process",
+        "No validated analytical assays",
+        "No QA-approved release specifications"
+      ]
+    },
+    "nonclinical": {
+      "status": "NO_GO",
+      "score": 0.0,
+      "items": {
+        "glp_toxicology": {
+          "status": "NOT_STARTED",
+          "gap_description": "No GLP-compliant toxicology package",
+          "required_evidence": "GLP tox study reports, pathology reports",
+          "priority": "CRITICAL"
+        },
+        "biodistribution": {
+          "status": "NOT_STARTED",
+          "gap_description": "No biodistribution or dose-ranging data",
+          "required_evidence": "Biodistribution study report, tissue analysis",
+          "priority": "CRITICAL"
+        },
+        "dose_ranging": {
+          "status": "NOT_STARTED",
+          "gap_description": "No dose optimization data",
+          "required_evidence": "Dose-ranging study report, MTD determination",
+          "priority": "HIGH"
+        },
+        "efficacy_package": {
+          "status": "NOT_STARTED",
+          "gap_description": "No pharmacology/efficacy data for target indication",
+          "required_evidence": "Efficacy study reports, mechanism of action data",
+          "priority": "HIGH"
+        },
+        "off_target_risk_assessment": {
+          "status": "NOT_STARTED",
+          "gap_description": "Immunogenicity and off-target risks not fully documented",
+          "required_evidence": "Risk assessment report, mitigation strategies",
+          "priority": "MEDIUM"
+        }
+      },
+      "evidence": [],
+      "critical_gaps": [
+        "No GLP toxicology studies",
+        "No biodistribution studies"
+      ]
+    },
+    "clinical_operations": {
+      "status": "NO_GO",
+      "score": 0.0,
+      "items": {
+        "site_feasibility": {
+          "status": "NOT_STARTED",
+          "gap_description": "No clinical site identification or feasibility assessment",
+          "required_evidence": "Site feasibility reports, site contracts",
+          "priority": "HIGH"
+        },
+        "monitoring_plan": {
+          "status": "NOT_STARTED",
+          "gap_description": "No clinical monitoring or safety reporting plans",
+          "required_evidence": "Monitoring plan, safety management plan",
+          "priority": "HIGH"
+        },
+        "dsmb_safety_reporting": {
+          "status": "NOT_STARTED",
+          "gap_description": "No Data Safety Monitoring Board charter or safety governance",
+          "required_evidence": "DSMB charter, safety reporting procedures",
+          "priority": "CRITICAL"
+        },
+        "stopping_rules": {
+          "status": "NOT_STARTED",
+          "gap_description": "Inclusion/exclusion criteria and stopping rules undefined",
+          "required_evidence": "Protocol sections, statistical analysis plan",
+          "priority": "HIGH"
+        },
+        "imp_accountability": {
+          "status": "NOT_STARTED",
+          "gap_description": "Investigational product handling and randomization not validated",
+          "required_evidence": "IMP manual, randomization system validation",
+          "priority": "MEDIUM"
+        }
+      },
+      "evidence": [],
+      "critical_gaps": [
+        "No DSMB/safety reporting framework",
+        "No clinical site feasibility"
+      ]
+    },
+    "quality_compliance": {
+      "status": "NO_GO",
+      "score": 0.0,
+      "items": {
+        "gcp_gmp_training": {
+          "status": "NOT_STARTED",
+          "gap_description": "No training records for trial-critical staff",
+          "required_evidence": "Training logs, GCP certificates",
+          "priority": "HIGH"
+        },
+        "document_control": {
+          "status": "NOT_STARTED",
+          "gap_description": "No versioning or document control process",
+          "required_evidence": "Document control SOP, version history",
+          "priority": "HIGH"
+        },
+        "change_control": {
+          "status": "NOT_STARTED",
+          "gap_description": "No audit trail or change-control process",
+          "required_evidence": "Change control SOP, change logs",
+          "priority": "HIGH"
+        },
+        "mock_audit": {
+          "status": "NOT_STARTED",
+          "gap_description": "No inspection-readiness assessment completed",
+          "required_evidence": "Mock audit report, corrective actions",
+          "priority": "MEDIUM"
+        }
+      },
+      "evidence": [],
+      "critical_gaps": [
+        "No GCP/GMP training system",
+        "No document control process"
+      ]
+    },
+    "software_data_security": {
+      "status": "NO_GO",
+      "score": 0.0,
+      "items": {
+        "traceability_matrix": {
+          "status": "NOT_STARTED",
+          "gap_description": "No data integrity or traceability documentation",
+          "required_evidence": "Traceability matrix, data flow diagrams",
+          "priority": "HIGH"
+        },
+        "software_validation_package": {
+          "status": "NOT_STARTED",
+          "gap_description": "No formal software validation for clinical decision support",
+          "required_evidence": "Validation protocol, test results, UAT",
+          "priority": "CRITICAL"
+        },
+        "security_controls_tested": {
+          "status": "NOT_STARTED",
+          "gap_description": "No access control, encryption, or backup/restore testing",
+          "required_evidence": "Security test reports, penetration testing",
+          "priority": "HIGH"
+        },
+        "privacy_compliance": {
+          "status": "NOT_STARTED",
+          "gap_description": "No HIPAA/GDPR/local law compliance verification for patient data",
+          "required_evidence": "Privacy impact assessment, compliance certificates",
+          "priority": "CRITICAL"
+        },
+        "incident_response_tested": {
+          "status": "NOT_STARTED",
+          "gap_description": "No business continuity or incident response procedures tested",
+          "required_evidence": "IR plan, BCP test results",
+          "priority": "MEDIUM"
+        }
+      },
+      "evidence": [],
+      "critical_gaps": [
+        "No software validation package",
+        "No privacy compliance verification"
+      ]
+    }
+  },
+  "gate_thresholds": {
+    "go": 0.85,
+    "conditional_go": 0.7
+  },
+  "gate_result": {
+    "computed_weighted_score": 0.0,
+    "all_mandatory_complete": false,
+    "decision": "NO_GO",
+    "total_critical_gaps": 15,
+    "total_high_priority_gaps": 12,
+    "total_medium_priority_gaps": 4,
+    "estimated_timeline_to_readiness": "18-24 months",
+    "immediate_action_items": [
+      "Assign all workstream owners (7 critical positions)",
+      "Initiate pre-IND meeting with FDA/EMA",
+      "Begin GMP manufacturing process development",
+      "Start GLP toxicology studies",
+      "Establish quality management system"
+    ],
+    "notes": "All workstreams are NOT_STARTED. Software research system is functional but clinical trial infrastructure is completely absent. This is a research prototype, not a clinical trial-ready system."
+  },
+  "software_assessment": {
+    "status": "FUNCTIONAL_RESEARCH_SYSTEM",
+    "modules_operational": 6,
+    "modules_total": 6,
+    "validated": true,
+    "clinical_grade": false,
+    "current_classification": "ADVANCED_PRECLINICAL",
+    "capabilities": [
+      "Neoantigen prediction and immunogenicity scoring",
+      "HLA binding affinity prediction",
+      "mRNA sequence optimization",
+      "Pharmacokinetics modeling",
+      "Clinical readiness assessment",
+      "Comprehensive report generation"
+    ],
+    "limitations": [
+      "Not validated for clinical decision-making",
+      "No GMP-compliant software development",
+      "No 21 CFR Part 11 compliance",
+      "No audit trails or electronic signatures",
+      "No formal software validation package"
+    ]
+  }
+}

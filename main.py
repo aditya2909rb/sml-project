@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
+import os
 import threading
 from datetime import datetime
 from pathlib import Path
@@ -9,6 +11,15 @@ from pathlib import Path
 from sml.config import load_config
 from sml.runner import run_loop, run_one_cycle
 from sml.status_api import run_status_server
+
+
+def _configure_logging() -> None:
+    """Configure process-wide structured-ish logging for runtime diagnostics."""
+    level = os.getenv("SML_LOG_LEVEL", "INFO").upper()
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s %(levelname)s %(name)s %(message)s",
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -104,6 +115,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    _configure_logging()
     args = parse_args()
     config = load_config()
     repo_root = Path(__file__).resolve().parent
@@ -425,7 +437,8 @@ def run_patient_pipeline(
     print(f"Selected neoantigens: {len(report.get('selected_neoantigens', []))}")
     if report.get("mrna_construct"):
         print(f"mRNA length: {report['mrna_construct'].get('length')}")
-    print(f"Safety status: {report.get('safety_report', {}).get('summary', {}).get('overall_status')}")
+    safety_summary = (report.get("safety_report") or {}).get("summary", {})
+    print(f"Safety status: {safety_summary.get('overall_status', 'N/A')}")
     for reason in decision.get("reasons", []):
         print(f"- {reason}")
 

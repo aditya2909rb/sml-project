@@ -1,0 +1,30 @@
+{
+  "script_id": "TS-007",
+  "generated_at_utc": "2026-04-06T09:17:57+00:00",
+  "checks": {
+    "pq_e2e_01_end_to_end": true,
+    "pq_e2e_02_multi_run_consistency": true,
+    "pq_perf_01_runtime_leq_10min": true,
+    "pq_perf_02_recovery_simulation": true,
+    "pq_ops_01_operational_handoff": false,
+    "pq_ops_02_incident_drill": false
+  },
+  "runtime_seconds": {
+    "run_a": 10.79,
+    "run_b": 3.0
+  },
+  "backup_zip": "G:\\ai new model\\validation\\evidence\\pq_backup_20260406_144757.zip",
+  "notes": {
+    "pq_ops_01_operational_handoff": "Manual training/competency evidence required",
+    "pq_ops_02_incident_drill": "Manual incident drill evidence required"
+  },
+  "stdout_tail": {
+    "run_a": "PATIENT PIPELINE REPORT\n==================================================\nSample ID: pq_sample_a\nApproved for research: False\nSelected neoantigens: 0\nSafety status: N/A\n- No neoantigens passed strict gates: affinity <= 200.0 nM, immunogenicity >= 0.6, stability >= 0.5\n",
+    "run_b": "PATIENT PIPELINE REPORT\n==================================================\nSample ID: pq_sample_b\nApproved for research: False\nSelected neoantigens: 0\nSafety status: N/A\n- No neoantigens passed strict gates: affinity <= 200.0 nM, immunogenicity >= 0.6, stability >= 0.5\n"
+  },
+  "stderr_tail": {
+    "run_a": "2026-04-06 14:47:53,220 INFO sml.patient_pipeline Starting patient DNA pipeline\n2026-04-06 14:47:53,257 INFO sml.patient_pipeline Patient DNA pipeline completed\n",
+    "run_b": "2026-04-06 14:47:56,796 INFO sml.patient_pipeline Starting patient DNA pipeline\n2026-04-06 14:47:56,828 INFO sml.patient_pipeline Patient DNA pipeline completed\n"
+  },
+  "result": "PASS_PARTIAL"
+}

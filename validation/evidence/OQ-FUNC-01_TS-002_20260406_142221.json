@@ -1,0 +1,31 @@
+{
+  "script_id": "TS-002",
+  "generated_at_utc": "2026-04-06T08:52:21+00:00",
+  "command": [
+    "g:/ai new model/.venv/Scripts/python.exe",
+    "main.py",
+    "run-patient-pipeline",
+    "--sample-id",
+    "oq_validation_sample",
+    "--normal-fasta",
+    "outputs/check_demo/check_patient_01_normal.fasta",
+    "--tumor-fasta",
+    "outputs/check_demo/check_patient_01_tumor.fasta",
+    "--output-json",
+    "validation\\evidence\\pipeline_oq_validation_sample.json",
+    "--output-mrna-fasta",
+    "validation\\evidence\\oq_validation_sample_mrna.fasta"
+  ],
+  "checks": {
+    "command_exit_zero": false,
+    "output_json_exists": true,
+    "output_fasta_exists": false,
+    "payload_has_sample_id": true,
+    "payload_has_decision": true,
+    "payload_has_gmp_record": false
+  },
+  "command_returncode": 1,
+  "stdout_tail": "PATIENT PIPELINE REPORT\n==================================================\nSample ID: oq_validation_sample\nApproved for research: False\nSelected neoantigens: 0\n",
+  "stderr_tail": "2026-04-06 14:22:20,735 INFO sml.patient_pipeline Starting patient DNA pipeline\n2026-04-06 14:22:20,777 INFO sml.patient_pipeline Patient DNA pipeline completed\nTraceback (most recent call last):\n  File \"G:\\ai new model\\main.py\", line 503, in <module>\n    main()\n    ~~~~^^\n  File \"G:\\ai new model\\main.py\", line 168, in main\n    run_patient_pipeline(\n    ~~~~~~~~~~~~~~~~~~~~^\n        sample_id=args.sample_id,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<4 lines>...\n        output_mrna_fasta=Path(args.output_mrna_fasta) if args.output_mrna_fasta else None,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"G:\\ai new model\\main.py\", line 440, in run_patient_pipeline\n    print(f\"Safety status: {report.get('safety_report', {}).get('summary', {}).get('overall_status')}\")\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'get'\n",
+  "result": "FAIL"
+}

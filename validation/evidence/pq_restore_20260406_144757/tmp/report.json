@@ -1,0 +1,33 @@
+{
+  "sample_id": "tmp",
+  "inputs": {
+    "normal_fasta": "outputs\\tmp\\n.fasta",
+    "tumor_fasta": "outputs\\tmp\\t.fasta",
+    "hla_allele": "HLA-A*02:01",
+    "normal_length": 16000,
+    "tumor_length": 16000
+  },
+  "mutation_report": {
+    "total_mutations": 399,
+    "driver_mutations": 0,
+    "passenger_mutations": 399,
+    "tumor_mutational_burden": 24937.5,
+    "microsatellite_status": "MSS"
+  },
+  "neoantigen_candidates": [],
+  "selected_neoantigens": [],
+  "mrna_construct": null,
+  "safety_report": null,
+  "decision": {
+    "approved_for_research": false,
+    "reasons": [
+      "No neoantigens passed strict gates: affinity <= 500.0 nM, immunogenicity >= 0.45, stability >= 0.2"
+    ],
+    "strict_thresholds": {
+      "max_binding_affinity_nm": 500.0,
+      "min_immunogenicity": 0.45,
+      "min_peptide_stability": 0.2,
+      "max_warning_count": 8
+    }
+  }
+}

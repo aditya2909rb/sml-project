@@ -1,0 +1,13 @@
+{
+  "script_id": "TS-004",
+  "generated_at_utc": "2026-04-06T09:06:55+00:00",
+  "checks": {
+    "users_created": true,
+    "sessions_created": true,
+    "researcher_can_approve_analysis": true,
+    "viewer_cannot_approve_analysis": true,
+    "invalidated_session_denied": true
+  },
+  "db_path": "validation\\evidence\\oq_sec_access_control.db",
+  "result": "PASS"
+}

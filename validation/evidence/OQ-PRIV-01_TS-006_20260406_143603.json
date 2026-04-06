@@ -1,0 +1,14 @@
+{
+  "script_id": "TS-006",
+  "generated_at_utc": "2026-04-06T09:06:03+00:00",
+  "checks": {
+    "identifier_fields_removed": true,
+    "email_redacted_in_notes": true,
+    "non_identifying_field_preserved": true
+  },
+  "deidentified_payload": {
+    "notes": "Contact [REDACTED] for follow-up",
+    "non_identifying_field": "tumor_sample_batch_01"
+  },
+  "result": "PASS"
+}

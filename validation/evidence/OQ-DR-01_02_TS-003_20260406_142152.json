@@ -1,0 +1,14 @@
+{
+  "script_id": "TS-003",
+  "generated_at_utc": "2026-04-06T08:51:52+00:00",
+  "source_dir": "outputs",
+  "backup_zip": "validation\\evidence\\backup_smoke_20260406_142152.zip",
+  "restore_dir": "validation\\evidence\\restore_smoke_20260406_142152",
+  "checks": {
+    "source_exists": true,
+    "source_is_dir": true,
+    "backup_zip_created": true,
+    "restore_contains_files": true
+  },
+  "result": "PASS"
+}

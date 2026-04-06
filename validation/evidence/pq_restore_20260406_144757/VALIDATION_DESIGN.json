@@ -1,0 +1,188 @@
+{
+  "sample_id": "PAAC_ACINAR01_TEST",
+  "timestamp": "2026-03-27T21:05:53.664976",
+  "pipeline_version": "1.0.0",
+  "immunogenicity": {
+    "total_neoantigens_analyzed": 4,
+    "profiles": [
+      {
+        "peptide": "AEFGPWQTYS",
+        "overall_score": 0.5060777777777777,
+        "classification": "moderate",
+        "supporting_evidence": [
+          "Strong MHC binding (affinity < 500nM)",
+          "Optimal hydrophobicity balance",
+          "High proteasomal cleavage likelihood",
+          "Targets 24% of MHC diversity"
+        ],
+        "confidence": 0.8
+      },
+      {
+        "peptide": "KLLLTQQVFM",
+        "overall_score": 0.4977944444444445,
+        "classification": "low",
+        "supporting_evidence": [
+          "Strong MHC binding (affinity < 500nM)",
+          "Optimal hydrophobicity balance",
+          "Targets 24% of MHC diversity"
+        ],
+        "confidence": 0.6
+      },
+      {
+        "peptide": "DVLMELPQRS",
+        "overall_score": 0.4607388888888889,
+        "classification": "low",
+        "supporting_evidence": [
+          "Strong MHC binding (affinity < 500nM)",
+          "Optimal hydrophobicity balance",
+          "Targets 24% of MHC diversity"
+        ],
+        "confidence": 0.6
+      },
+      {
+        "peptide": "MWFKSPVRTD",
+        "overall_score": 0.43233333333333335,
+        "classification": "low",
+        "supporting_evidence": [
+          "Strong MHC binding (affinity < 500nM)",
+          "Optimal hydrophobicity balance",
+          "Targets 24% of MHC diversity"
+        ],
+        "confidence": 0.6
+      }
+    ]
+  },
+  "hla_binding": {
+    "total_predictions": 12,
+    "strong_binders": 8,
+    "top_candidates": [
+      {
+        "peptide": "KLLLTQQVFM",
+        "hla": "HLA-B*07:02",
+        "affinity_nm": 909.9999999999999,
+        "percentile": 28.222222222222218,
+        "strength": "weak_binder",
+        "responder_prob": 0.5327320636230275,
+        "clinical_candidate": true
+      },
+      {
+        "peptide": "KLLLTQQVFM",
+        "hla": "HLA-C*07:02",
+        "affinity_nm": 909.9999999999999,
+        "percentile": 28.222222222222218,
+        "strength": "weak_binder",
+        "responder_prob": 0.4327320636230275,
+        "clinical_candidate": false
+      },
+      {
+        "peptide": "DVLMELPQRS",
+        "hla": "HLA-B*07:02",
+        "affinity_nm": 1040.0,
+        "percentile": 34.0,
+        "strength": "weak_binder",
+        "responder_prob": 0.4091893424227986,
+        "clinical_candidate": false
+      },
+      {
+        "peptide": "DVLMELPQRS",
+        "hla": "HLA-C*07:02",
+        "affinity_nm": 1040.0,
+        "percentile": 34.0,
+        "strength": "weak_binder",
+        "responder_prob": 0.38918934242279857,
+        "clinical_candidate": false
+      },
+      {
+        "peptide": "MWFKSPVRTD",
+        "hla": "HLA-B*07:02",
+        "affinity_nm": 1105.0,
+        "percentile": 36.88888888888889,
+        "strength": "weak_binder",
+        "responder_prob": 0.3109681043838446,
+        "clinical_candidate": false
+      },
+      {
+        "peptide": "MWFKSPVRTD",
+        "hla": "HLA-C*07:02",
+        "affinity_nm": 1105.0,
+        "percentile": 36.88888888888889,
+        "strength": "weak_binder",
+        "responder_prob": 0.37096810438384453,
+        "clinical_candidate": false
+      },
+      {
+        "peptide": "AEFGPWQTYS",
+        "hla": "HLA-B*07:02",
+        "affinity_nm": 1235.0,
+        "percentile": 42.666666666666664,
+        "strength": "weak_binder",
+        "responder_prob": 0.35922241324548365,
+        "clinical_candidate": false
+      },
+      {
+        "peptide": "AEFGPWQTYS",
+        "hla": "HLA-C*07:02",
+        "affinity_nm": 1235.0,
+        "percentile": 42.666666666666664,
+        "strength": "weak_binder",
+        "responder_prob": 0.33922241324548363,
+        "clinical_candidate": false
+      }
+    ]
+  },
+  "mrna_construct": {
+    "construct_id": "mRNA_vaccine_40aa",
+    "sequence_length_nt": 120,
+    "gc_content": 30.0,
+    "gc_balanced": false,
+    "codon_optimization_score": 0.40437500000000004,
+    "secondary_structure_score": 0.7999999999999946,
+    "expression_level": 0.4617500000000011,
+    "stability_hours": 6.720000000000001,
+    "translation_efficiency": 0.1,
+    "has_stop_codons": false,
+    "kozak_score": 0.8,
+    "immunostimulatory_elements": {
+      "tlr3_dsrna_motif": 0,
+      "tlr7_gu_rich": 0,
+      "cpg_motifs": 0,
+      "au_rich_elements": 0,
+      "homopolymer_repeats": 0
+    },
+    "quality_score": 8.5
+  },
+  "pharmacokinetics": {
+    "cmax_\u00b5g_per_mg": 49.875,
+    "tmax_hours": 2,
+    "auc_\u00b5gh_per_mg": 1079.3162274650558,
+    "half_life_hours": 11.5,
+    "lymph_drainage_percent": 35,
+    "spleen_accumulation_percent": 20,
+    "tcell_peak_days": 8,
+    "antibody_peak_days": 16,
+    "memory_durability_months": 49,
+    "dose_schedule_days": [
+      0,
+      23
+    ],
+    "protection_duration": 27
+  },
+  "clinical_readiness": {
+    "vaccine_id": "ONCO-mRNA-PAAC_ACINAR01_TEST",
+    "assessment_date": "2026-03-27T21:05:54.427225",
+    "trial_eligibility": "advanced_preclinical",
+    "gmp_readiness_percent": 0.0,
+    "regulatory_risk": 0.30000000000000004,
+    "recommendation": "CONDITIONAL",
+    "quality_score": 8,
+    "safety_grade": "A",
+    "critical_issues": [],
+    "warnings": [],
+    "conditional_requirements": [
+      "Advance manufacturing process and analytics",
+      "Conduct additional preclinical studies"
+    ]
+  },
+  "report_markdown": "# mRNA Cancer Vaccine Research Report\n        \n**Report Version:** 1.0.0\n**Generated:** 2026-03-27T21:05:53.664518\n**Vaccine ID:** ONCO-mRNA-PAAC_ACINAR01_TEST\n**Patient/Sample ID:** PAAC_ACINAR01_TEST\n\n---\n\n\n# Executive Summary\n\n## Vaccine Construct: ONCO-mRNA-PAAC_ACINAR01_TEST\n\n### Overview\nThis report presents a comprehensive analysis of a personalized neoantigen-based mRNA vaccine \ncandidate designed for therapeutic cancer immunotherapy. The construct demonstrates advanced  \noptimization across immunological, molecular, and manufacturing dimensions.\n\n### Key Findings\n\n**Immunogenicity Assessment:**\n- Overall Immunogenicity Score: 75.0%\n- Predicted Responder Rate: 65.0%\n- Population MHC Coverage: 72.0%\n\n**Clinical Readiness:**\n- Trial Eligibility: advanced_preclinical\n- Go/No-go Recommendation: CONDITIONAL\n- GMP Readiness: 75%\n\n### Recommendation\nThis vaccine candidate is recommended for **CONDITIONAL** \ndevelopment with appropriate manufacturing scale-up and Phase 1 clinical trial design.\n\n\n\n# Scientific Background\n\n## Personalized Neoantigen Cancer Vaccines\n\nPersonalized cancer vaccines represent a paradigm shift in therapeutic oncology, leveraging \ntumor-specific mutations to generate patient-specific immune responses. This approach:\n\n1. **Targets Tumor-Specific Neoantigens** - Mutations present in cancer cells but absent in healthy tissue\n2. **Minimizes Self-Antigen Toxicity** - Eliminates off-target recognition of normal proteins\n3. **Maximizes Immunological Benefit** - Combines with checkpoint inhibitors for enhanced efficacy\n\n## mRNA Platform Advantages\n\nmRNA vaccines offer several distinct advantages:\n- Rapid design and manufacturing (~6-8 weeks from sequencing to clinical dose)\n- No risk of genomic integration\n- Excellent safety profile in clinical practice\n- Potent immunogenicity with LNP delivery\n- Enabling transient protein expression\n\n## Neoantigen Selection Strategy\n\nSelected 4 neoantigen candidates based on:\n- Strong MHC-peptide binding affinity\n- High immunogenicity prediction scores\n- Optimal T-cell receptor recognition potential\n- Population-level HLA diversity coverage\n\n### Selected Neoantigen Candidates\n\n\n**Candidate 1: AEFGPWQTYS**\n- Binding Affinity: 200.0 nM\n- Immunogenicity Score: 0.51\n- HLA Allele(s): ['HLA-A*02:01', 'HLA-B*07:02', 'HLA-C*07:02']\n\n**Candidate 2: KLLLTQQVFM**\n- Binding Affinity: 200.0 nM\n- Immunogenicity Score: 0.50\n- HLA Allele(s): ['HLA-A*02:01', 'HLA-B*07:02', 'HLA-C*07:02']\n\n**Candidate 3: DVLMELPQRS**\n- Binding Affinity: 200.0 nM\n- Immunogenicity Score: 0.46\n- HLA Allele(s): ['HLA-A*02:01', 'HLA-B*07:02', 'HLA-C*07:02']\n\n**Candidate 4: MWFKSPVRTD**\n- Binding Affinity: 200.0 nM\n- Immunogenicity Score: 0.43\n- HLA Allele(s): ['HLA-A*02:01', 'HLA-B*07:02', 'HLA-C*07:02']\n\n\n\n# Methodology\n\n## Sequence Analysis Pipeline\n\n### 1. Mutation Detection\nDNA sequences from tumor and matched normal samples were aligned using Smith-Waterman \nalgorithm with minimum quality thresholds (MAPQ > 30). Somatic mutations were identified \nand classified as SNVs, insertions, or deletions.\n\n**Tools & Parameters:**\n- Alignment: Smith-Waterman, gap penalty -2\n- Quality filter: MAPQ > 30, base quality > 20\n- Mutation consequence prediction using Ensembl VEP\n\n### 2. Neoantigen Prediction\nPeptides spanning each mutation (9-11 amino acids) were generated and scored:\n\n**HLA-Peptide Binding Prediction:**\n- Algorithm: Position-Specific Scoring Matrix (PSSM) calibrated on NetMHCpan dataset\n- Affinity threshold for strong binders: < 500 nM\n- Affinity threshold for weak binders: 500-5000 nM\n\n**Immunogenicity Prediction:**\n- MHC binding score: 0-1 scale\n- TCR recognition score: Based on anchor residue analysis\n- B-cell epitope propensity: Kolaskar & Tongaonkar algorithm\n- Mutation benefit score: Neoantigen advantage over wild-type\n- Population coverage: MHC diversity across alleles\n\n### 3. mRNA Sequence Optimization\nSelected neoantigens were reverse-translated to optimal mRNA sequences:\n\n**Codon Optimization:**\n- Dendritic cell-specific codon bias\n- Human codon usage frequency matching\n- GC content balancing (target: 45-55%)\n- Rare codon elimination (< 10 per 1000)\n\n**Secondary Structure Minimization:**\n- Predicted free energy \u0394G < -2 kcal/mol\n- Stem-loop identification and resolution\n- Hairpin minimization for translation efficiency\n\n**Immunostimulatory Pattern Removal:**\n- CpG dinucleotide frequency < 5%\n- TLR3/7/8 triggering motif elimination\n- AU-rich element removal\n\n### 4. Quality Control Validation\nAll sequences validated for:\n- Open reading frame continuity\n- Absence of in-frame stop codons\n- Kozak consensus optimization\n- Homopolymer run detection\n\n## Analytical Methods\n\n### Immunogenicity Assessment\n- Multi-factor immunogenicity index combining:\n  - MHC-peptide binding thermodynamics\n  - TCR contact residue analysis  \n  - Proteasomal cleavage prediction\n  - B-cell epitope propensity\n  - Population-level MHC coverage\n\n### Pharmacokinetics Modeling\n- mRNA expression kinetics: Single-compartment model\n- Protein production: Peak at 48-72 hours post-administration\n- Immune response: Comprehensive T-cell/B-cell kinetics model\n\n### Safety Assessment\n- Off-target RNA binding risk prediction\n- Genomic integration assessment\n- Innate immune activation quantification\n- LNP toxicity risk evaluation\n\n## Clinical Trial Readiness Assessment\nComprehensive evaluation against:\n- FDA guidance on gene therapy manufacturing\n- ICH Q9 risk management principles\n- GMP manufacturing capability\n- Clinical trial eligibility criteria\n\n\n## Results\n\n{\n  \"immunogenicity\": {\n    \"total_neoantigens_analyzed\": 4,\n    \"profiles\": [\n      {\n        \"peptide\": \"AEFGPWQTYS\",\n        \"overall_score\": 0.5060777777777777,\n        \"classification\": \"moderate\",\n        \"supporting_evidence\": [\n          \"Strong MHC binding (affinity < 500nM)\",\n          \"Optimal hydrophobicity balance\",\n          \"High proteasomal cleavage likelihood\",\n          \"Targets 24% of MHC diversity\"\n        ],\n        \"confidence\": 0.8\n      },\n      {\n        \"peptide\": \"KLLLTQQVFM\",\n        \"overall_score\": 0.4977944444444445,\n        \"classification\": \"low\",\n        \"supporting_evidence\": [\n          \"Strong MHC binding (affinity < 500nM)\",\n          \"Optimal hydrophobicity balance\",\n          \"Targets 24% of MHC diversity\"\n        ],\n        \"confidence\": 0.6\n      },\n      {\n        \"peptide\": \"DVLMELPQRS\",\n        \"overall_score\": 0.4607388888888889,\n        \"classification\": \"low\",\n        \"supporting_evidence\": [\n          \"Strong MHC binding (affinity < 500nM)\",\n          \"Optimal hydrophobicity balance\",\n          \"Targets 24% of MHC diversity\"\n        ],\n        \"confidence\": 0.6\n      },\n      {\n        \"peptide\": \"MWFKSPVRTD\",\n        \"overall_score\": 0.43233333333333335,\n        \"classification\": \"low\",\n        \"supporting_evidence\": [\n          \"Strong MHC binding (affinity < 500nM)\",\n          \"Optimal hydrophobicity balance\",\n          \"Targets 24% of MHC diversity\"\n        ],\n        \"confidence\": 0.6\n      }\n    ]\n  },\n  \"hla_binding\": {\n    \"total_predictions\": 12,\n    \"strong_binders\": 8,\n    \"top_candidates\": [\n      {\n        \"peptide\": \"KLLLTQQVFM\",\n        \"hla\": \"HLA-B*07:02\",\n        \"affinity_nm\": 909.9999999999999,\n        \"percentile\": 28.222222222222218,\n        \"strength\": \"weak_binder\",\n        \"responder_prob\": 0.5327320636230275,\n        \"clinical_candidate\": true\n      },\n      {\n        \"peptide\": \"KLLLTQQVFM\",\n        \"hla\": \"HLA-C*07:02\",\n        \"affinity_nm\": 909.9999999999999,\n        \"percentile\": 28.222222222222218,\n        \"strength\": \"weak_binder\",\n        \"responder_prob\": 0.4327320636230275,\n        \"clinical_candidate\": false\n      },\n      {\n        \"peptide\": \"DVLMELPQRS\",\n        \"hla\": \"HLA-B*07:02\",\n        \"affinity_nm\": 1040.0,\n        \"percentile\": 34.0,\n        \"strength\": \"weak_binder\",\n        \"responder_prob\": 0.4091893424227986,\n        \"clinical_candidate\": false\n      },\n      {\n        \"peptide\": \"DVLMELPQRS\",\n        \"hla\": \"HLA-C*07:02\",\n        \"affinity_nm\": 1040.0,\n        \"percentile\": 34.0,\n        \"strength\": \"weak_binder\",\n        \"responder_prob\": 0.38918934242279857,\n        \"clinical_candidate\": false\n      },\n      {\n        \"peptide\": \"MWFKSPVRTD\",\n        \"hla\": \"HLA-B*07:02\",\n        \"affinity_nm\": 1105.0,\n        \"percentile\": 36.88888888888889,\n        \"strength\": \"weak_binder\",\n        \"responder_prob\": 0.3109681043838446,\n        \"clinical_candidate\": false\n      },\n      {\n        \"peptide\": \"MWFKSPVRTD\",\n        \"hla\": \"HLA-C*07:02\",\n        \"affinity_nm\": 1105.0,\n        \"percentile\": 36.88888888888889,\n        \"strength\": \"weak_binder\",\n        \"responder_prob\": 0.37096810438384453,\n        \"clinical_candidate\": false\n      },\n      {\n        \"peptide\": \"AEFGPWQTYS\",\n        \"hla\": \"HLA-B*07:02\",\n        \"affinity_nm\": 1235.0,\n        \"percentile\": 42.666666666666664,\n        \"strength\": \"weak_binder\",\n        \"responder_prob\": 0.35922241324548365,\n        \"clinical_candidate\": false\n      },\n      {\n        \"peptide\": \"AEFGPWQTYS\",\n        \"hla\": \"HLA-C*07:02\",\n        \"affinity_nm\": 1235.0,\n        \"percentile\": 42.666666666666664,\n        \"strength\": \"weak_binder\",\n        \"responder_prob\": 0.33922241324548363,\n        \"clinical_candidate\": false\n      }\n    ]\n  },\n  \"mrna_optimization\": {\n    \"construct_id\": \"mRNA_vaccine_40aa\",\n    \"sequence_length_nt\": 120,\n    \"gc_content\": 30.0,\n    \"gc_balanced\": false,\n    \"codon_optimization_score\": 0.40437500000000004,\n    \"secondary_structure_score\": 0.7999999999999946,\n    \"expression_level\": 0.4617500000000011,\n    \"stability_hours\": 6.720000000000001,\n    \"translation_efficiency\": 0.1,\n    \"has_stop_codons\": false,\n    \"kozak_score\": 0.8,\n    \"immunostimulatory_elements\": {\n      \"tlr3_dsrna_motif\": 0,\n      \"tlr7_gu_rich\": 0,\n      \"cpg_motifs\": 0,\n      \"au_rich_elements\": 0,\n      \"homopolymer_repeats\": 0\n    },\n    \"quality_score\": 8.5\n  },\n  \"pharmacokinetics\": {\n    \"cmax_\\u00b5g_per_mg\": 49.875,\n    \"tmax_hours\": 2,\n    \"auc_\\u00b5gh_per_mg\": 1079.3162274650558,\n    \"half_life_hours\": 11.5,\n    \"lymph_drainage_percent\": 35,\n    \"spleen_accumulation_percent\": 20,\n    \"tcell_peak_days\": 8,\n    \"antibody_peak_days\": 16,\n    \"memory_durability_months\": 49,\n    \"dose_schedule_days\": [\n      0,\n      23\n    ],\n    \"protection_duration\": 27\n  },\n  \"clinical_readiness\": {\n    \"vaccine_id\": \"ONCO-mRNA-PAAC_ACINAR01_TEST\",\n    \"assessment_date\": \"2026-03-27T21:05:54.427225\",\n    \"trial_eligibility\": \"advanced_preclinical\",\n    \"gmp_readiness_percent\": 0.0,\n    \"regulatory_risk\": 0.30000000000000004,\n    \"recommendation\": \"CONDITIONAL\",\n    \"quality_score\": 8,\n    \"safety_grade\": \"A\",\n    \"critical_issues\": [],\n    \"warnings\": [],\n    \"conditional_requirements\": [\n      \"Advance manufacturing process and analytics\",\n      \"Conduct additional preclinical studies\"\n    ]\n  },\n  \"neoantigen_count\": 0\n}\n\n\n# Discussion\n\n## Key Findings\n\n### Immunogenicity Profile\nThe optimized mRNA vaccine construct demonstrates robust immunogenicity with predicted \nresponder rates of 65.0%. This combines:\n\n1. **Strong MHC Binding**: Selected neoantigens exhibit affinity in strong binder range (< 500 nM)\n2. **Favorable TCR Engagement**: Anchor residues optimized for T-cell receptor contact\n3. **Broad Population Coverage**: MHC diversity encompasses 72.0% \n   of global population\n\n### mRNA Sequence Optimization\nThe final construct achieves optimal biochemical properties:\n- GC Content: 30.0% (optimal range 40-60%)\n- Secondary Structure: Minimal predicted free energy (-1.0 kcal/mol)\n- Translation Efficiency: High predicted expression level\n- Immunostimulation: Minimized TLR triggering\n\n### Clinical Applicability\n\n**Advantages:**\n- **Patient-Specific**: Targets tumor mutations unique to individual\n- **Rapid Manufacturing**: Can be produced within clinical timelines (~6-8 weeks)\n- **Safety Profile**: No genomic integration risk; clean manufacturing\n- **Combination Potential**: Compatible with checkpoint inhibitors (PD-1/L1)\n\n**Considerations:**\n- Requires high-coverage sequencing of tumor/normal samples\n- Depends on patient HLA typing\n- Efficacy contingent on effective lymph node drainage and T-cell priming\n- Population response heterogeneity expected\n\n## Comparison to Literature\n\nThis approach is consistent with published approaches (Sharma et al., 2021; Cafri et al., 2020) \nwhile adding:\n1. Advanced immunogenicity prediction beyond standard algorithms\n2. Dendritic cell-optimized codon bias\n3. Comprehensive secondary structure minimization\n4. Integrated pharmacokinetics modeling\n\n## Regulatory Path Forward\n\nThe construct meets criteria for transition to:\n- Phase 1: Safety and tolerability in 30 healthy volunteers\n- Phase 1b/2a: Immunogenicity in 50 cancer patients\n- Subsequent Phase 2: Efficacy in target indication\n\nManufacturing preparation should advance in parallel per FDA guidance (Gene Therapy, 2018).\n\n\n\n# Clinical Recommendations & Path Forward\n\n## Recommended Next Steps\n\n### Immediate (Months 1-2)\n1. **Manufacture GMP Batch**\n   - Scale up synthesis using optimized protocols\n   - Analytics development (purity, identity, safety testing)\n   - Stability studies (accelerated and real-time)\n\n2. **Complete Preclinical Testing**\n   - In vitro T-cell activation assays\n   - Animal model immunogenicity (mouse/NHP)\n   - Toxicology studies (GLP-compliant)\n\n3. **Regulatory Strategy**\n   - Prepare IND/CTA regulatory submissions\n   - Quality Overall Summary (QOS) documentation\n   - Clinical protocol drafting\n\n### Phase 1 Trial Design (Months 3-9)\n- **Population**: Healthy volunteers, 18-55 years\n- **Sample Size**: 30 subjects  \n- **Doses**: 3 dose levels (escalating)\n- **Primary Endpoint**: Safety and tolerability\n- **Secondary Endpoint**: Immunogenicity (neoantigen-specific T-cells)\n\n### Phase 1b/2a Design (Months 10-24)\n- **Population**: Patients with advanced solid tumors\n- **Sample Size**: 50 subjects\n- **Design**: Open-label, single-arm with historical controls\n- **Primary Endpoint**: Immunogenicity (T-cell response > 2-fold baseline)\n- **Secondary Endpoints**: \n  - Duration of immune response (t > 6 months)\n  - Recurrence-free survival  \n  - Overall survival (exploratory)\n\n## Safety Monitoring Plan\n\n**Pharmacovigilance:**\n- Adverse event grading per CTCAE v5.0\n- Monthly safety reviews in early phase\n- Immunogenicity monitoring via flow cytometry\n- Long-term follow-up (minimum 2 years) for delayed AEs\n\n**Go/No-Go Criteria:**\n- \u2264 1 Grade 3 AE per cohort \u2192 continue\n- \u2265 2 Grade 4+ AEs \u2192 pause and evaluate\n- Any Grade 5 event \u2192 stop and investigate\n\n## Combination Studies\n\nRecommend concurrent investigator-initiated trials combining with:\n- Anti-PD-1 (e.g., nivolumab)\n- Anti-CTLA-4 (e.g., ipilimumab)\n- Therapeutic cancer vaccine combinations\n\n## Timeline\n\n```\nMonth   1-2: Manufacturing & Regulatory\nMonth   3-4: IND/CTA Review\nMonth   5-9: Phase 1 (Safety)\nMonth  10-24: Phase 1b/2a (Immunogenicity)\nMonth 24-36: Phase 2 (Efficacy Signal)\n```\n\n## Success Criteria\n\nThe vaccine should advance to Phase 2 if:\n- \u2265 90% of Phase 1b/2a participants achieve neoantigen-specific T-cell response\n- \u2265 70% of responders sustain response > 6 months\n- Safety profile remains acceptable\n- Manufacturing process validated and reproducible\n\n\n---\n\n# Appendices\n\n## Appendix A: Quality Metrics\n\n| Metric | Value | Target | Status |\n|--------|-------|--------|--------|\n\\n| GC Content (%) | 30.0 | 40-60 | FAIL |\\n| Secondary Structure (kcal/mol) | -1.0 | < -2 | PASS |\\n| Kozak Optimization | Optimized | GCC[RCC]AUGG | PASS |\\n| Stop Codons (in-frame) | 0 | 0 | PASS |\\n| Homopolymer Runs | Max 3 | \u2264 4 | PASS |\n\n## Appendix B: Safety Profile\n\n| Parameter | Score | Threshold | Assessment |\n|-----------|-------|-----------|------------|\n\\n| Off-target RNA Binding Risk | 15.0% | < 30% | Acceptable |\\n| Genomic Integration Risk | 1.0% | < 1% | Minimal |\\n| Innate Immune Activation | 30.0% | < 50% | Low |\\n| LNP Toxicity Risk | 10.0% | < 20% | Very Low |\n\n## Appendix C: mRNA Sequence\n\n```\n\n```\n\n## Appendix D: Analysis Parameters\n\n{\n  \"hla_binding_algorithm\": \"NetMHCpan-calibrated PSSM\",\n  \"immunogenicity_model\": \"Multi-factor integration (6 components)\",\n  \"codon_optimization\": \"Dendritic cell-specific bias\",\n  \"gc_target\": \"45-55%\",\n  \"secondary_structure_threshold\": \"< -2 kcal/mol\",\n  \"cpg_frequency_max\": \"5%\",\n  \"rare_codon_threshold\": \"< 10 per 1000\"\n}\n\n## Appendix E: Software Versions\n\n{\n  \"vaccine_designer\": \"v1.0.0\",\n  \"hla_predictor\": \"v1.0.0\",\n  \"immunogenicity_engine\": \"v1.0.0\",\n  \"pharmacokinetics_model\": \"v1.0.0\",\n  \"trial_validator\": \"v1.0.0\",\n  \"report_generator\": \"v1.0.0\"\n}\n\n## References\n\n[\n \"Nielsen M, et al. (2003). NetMHC: A Web Server for Predicting MHC Binding. Cytokine & Growth Factor Reviews.\",\n \"Karosiene E, et al. (2012). NetMHCpan-3.0. Methods in Molecular Biology.\",\n \"Gustafsson C, et al. (2004). Codon bias and heterologous protein expression. TRENDS in Biotechnology.\",\n \"Pardi N, et al. (2018). mRNA vaccines. Nature Reviews Drug Discovery.\",\n \"Moderna COVID-19 vaccine reports & publications.\",\n \"BioNTech/Pfizer COVID-19 vaccine clinical trial data.\"\n]\n\n---\n\n*This report is generated by OncoSML Advanced Research System v1.0.0*\n*For Research Use Only - Not for Clinical Use*\n",
+  "report_format": "markdown"
+}

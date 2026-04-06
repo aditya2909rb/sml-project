@@ -1,0 +1,16 @@
+{
+  "strong_binders": [
+    {
+      "peptide": "SIINFEKL",
+      "allele": "HLA-A*02:01",
+      "ic50_nm": 90.0
+    },
+    {
+      "peptide": "GILGFVFTL",
+      "allele": "HLA-A*03:01",
+      "ic50_nm": 145.0
+    }
+  ],
+  "weak_binders": [],
+  "source": "dry-run placeholder"
+}

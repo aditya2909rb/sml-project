@@ -1,0 +1,16 @@
+{
+  "script_id": "TS-010",
+  "generated_at_utc": "2026-04-06T11:23:04+00:00",
+  "checks": {
+    "required_docs_present": true,
+    "dryrun_command_exit_zero": true,
+    "dryrun_output_json_exists": true,
+    "dryrun_runtime_under_10min": true,
+    "handoff_artifacts_packaged": true
+  },
+  "runtime_seconds": 11.144,
+  "stdout_tail": "PATIENT PIPELINE REPORT\n==================================================\nSample ID: pq_handoff_dryrun\nApproved for research: False\nSelected neoantigens: 0\nSafety status: N/A\n- No neoantigens passed strict gates: affinity <= 200.0 nM, immunogenicity >= 0.6, stability >= 0.5\n",
+  "stderr_tail": "2026-04-06 16:53:03,273 INFO sml.patient_pipeline Starting patient DNA pipeline\n2026-04-06 16:53:03,309 INFO sml.patient_pipeline Patient DNA pipeline completed\n",
+  "result": "PASS",
+  "note": "Technical operational handoff dry-run evidence. Human training competency signoff remains governance-controlled."
+}

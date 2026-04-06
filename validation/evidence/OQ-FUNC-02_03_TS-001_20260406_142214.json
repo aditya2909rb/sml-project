@@ -1,0 +1,39 @@
+{
+  "script_id": "TS-001",
+  "generated_at_utc": "2026-04-06T08:52:14+00:00",
+  "base_url": "http://127.0.0.1:8787",
+  "checks": {
+    "health_http_200": true,
+    "health_status_ok": true,
+    "health_response_leq_2s": true,
+    "status_http_200": true,
+    "status_has_cycle_count": true,
+    "status_response_leq_3s": true
+  },
+  "health": {
+    "http_status": 200,
+    "elapsed_seconds": 0.6064,
+    "payload": {
+      "status": "ok",
+      "db_exists": true
+    },
+    "error": null
+  },
+  "status": {
+    "http_status": 200,
+    "elapsed_seconds": 0.6573,
+    "payload_keys": [
+      "cycle_count",
+      "db_exists",
+      "event_count",
+      "github_model_state",
+      "latest_cycle",
+      "latest_model_progress",
+      "now_utc",
+      "parameter_progress_percent",
+      "training_totals"
+    ],
+    "error": null
+  },
+  "result": "PASS"
+}

@@ -189,8 +189,9 @@ class CodonOptimizer:
 class StabilityOptimizer:
     """Optimizes mRNA stability through various modifications."""
     
-    def __init__(self):
-        self.gc_content_target = 0.55  # 55% GC content optimal
+    def __init__(self, gc_content_target: float = 0.50, gc_content_bounds: Tuple[float, float] = (0.40, 0.60)):
+        self.gc_content_target = gc_content_target
+        self.gc_content_bounds = gc_content_bounds
         self.unstable_motifs = ['AUUUA', 'UAUAU', 'UUUUU']  # AU-rich elements
         self.stable_motifs = ['GGG', 'CCC', 'GCG']  # GC-rich stabilizing elements
     
@@ -204,7 +205,8 @@ class StabilityOptimizer:
         Returns:
             Stability-optimized sequence
         """
-        optimized = sequence
+        # Normalize DNA alphabet to RNA for mRNA optimization steps.
+        optimized = sequence.replace('T', 'U')
         
         # 1. Optimize GC content
         optimized = self._adjust_gc_content(optimized)
@@ -217,17 +219,20 @@ class StabilityOptimizer:
         
         # 4. Optimize secondary structure
         optimized = self._optimize_secondary_structure(optimized)
+
+        # 5. Enforce deploy-time GC operating window.
+        optimized = self._enforce_gc_window(optimized)
         
         return optimized
     
     def _adjust_gc_content(self, sequence: str) -> str:
-        """Adjust GC content to optimal levels."""
+        """Adjust GC content toward target levels."""
         current_gc = self._calculate_gc_content(sequence)
         
-        if current_gc < self.gc_content_target - 0.1:
+        if current_gc < self.gc_content_target:
             # Add G/C bases
             return self._increase_gc_content(sequence)
-        elif current_gc > self.gc_content_target + 0.1:
+        elif current_gc > self.gc_content_target:
             # Add A/U bases
             return self._decrease_gc_content(sequence)
         else:
@@ -239,31 +244,74 @@ class StabilityOptimizer:
         return gc_count / len(sequence) if sequence else 0
     
     def _increase_gc_content(self, sequence: str) -> str:
-        """Increase GC content by substituting A/U with G/C."""
+        """Increase GC content by deterministic A/U -> G/C substitution."""
         result = list(sequence)
-        
-        # Replace some A/U with G/C (randomly)
-        substitutions = int((self.gc_content_target - self._calculate_gc_content(sequence)) * len(sequence) * 0.5)
-        
-        for _ in range(substitutions):
-            pos = random.randint(0, len(result) - 1)
-            if result[pos] in ['A', 'U']:
-                result[pos] = 'G' if random.random() < 0.5 else 'C'
+
+        current_gc = self._calculate_gc_content(sequence)
+        target_gc = max(self.gc_content_target, self.gc_content_bounds[0])
+        substitutions = max(0, math.ceil((target_gc - current_gc) * len(sequence)))
+
+        changed = 0
+        for pos, base in enumerate(result):
+            if changed >= substitutions:
+                break
+            if base in ['A', 'U']:
+                result[pos] = 'G' if (pos % 2 == 0) else 'C'
+                changed += 1
         
         return ''.join(result)
     
     def _decrease_gc_content(self, sequence: str) -> str:
-        """Decrease GC content by substituting G/C with A/U."""
+        """Decrease GC content by deterministic G/C -> A/U substitution."""
         result = list(sequence)
+
+        current_gc = self._calculate_gc_content(sequence)
+        target_gc = min(self.gc_content_target, self.gc_content_bounds[1])
+        substitutions = max(0, math.ceil((current_gc - target_gc) * len(sequence)))
+
+        changed = 0
+        for pos, base in enumerate(result):
+            if changed >= substitutions:
+                break
+            if base in ['G', 'C']:
+                result[pos] = 'A' if (pos % 2 == 0) else 'U'
+                changed += 1
         
-        # Replace some G/C with A/U (randomly)
-        substitutions = int((self._calculate_gc_content(sequence) - self.gc_content_target) * len(sequence) * 0.5)
-        
-        for _ in range(substitutions):
-            pos = random.randint(0, len(result) - 1)
-            if result[pos] in ['G', 'C']:
-                result[pos] = 'A' if random.random() < 0.5 else 'U'
-        
+        return ''.join(result)
+
+    def _enforce_gc_window(self, sequence: str) -> str:
+        """Clamp sequence GC into configured deployment window."""
+        min_gc, max_gc = self.gc_content_bounds
+        current_gc = self._calculate_gc_content(sequence)
+
+        if current_gc < min_gc:
+            return self._increase_gc_content_to(sequence, min_gc)
+        if current_gc > max_gc:
+            return self._decrease_gc_content_to(sequence, max_gc)
+        return sequence
+
+    def _increase_gc_content_to(self, sequence: str, target_gc: float) -> str:
+        result = list(sequence)
+        needed = max(0, math.ceil((target_gc - self._calculate_gc_content(sequence)) * len(sequence)))
+        changed = 0
+        for pos, base in enumerate(result):
+            if changed >= needed:
+                break
+            if base in ['A', 'U']:
+                result[pos] = 'G' if (pos % 2 == 0) else 'C'
+                changed += 1
+        return ''.join(result)
+
+    def _decrease_gc_content_to(self, sequence: str, target_gc: float) -> str:
+        result = list(sequence)
+        needed = max(0, math.ceil((self._calculate_gc_content(sequence) - target_gc) * len(sequence)))
+        changed = 0
+        for pos, base in enumerate(result):
+            if changed >= needed:
+                break
+            if base in ['G', 'C']:
+                result[pos] = 'A' if (pos % 2 == 0) else 'U'
+                changed += 1
         return ''.join(result)
     
     def _remove_unstable_motifs(self, sequence: str) -> str:
