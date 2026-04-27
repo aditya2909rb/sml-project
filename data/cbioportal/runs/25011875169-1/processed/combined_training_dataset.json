@@ -1,0 +1,17 @@
+[
+  {
+    "patient_info": {
+      "sample_id": "cbioportal_fallback_1",
+      "study_id": "fallback",
+      "cancer_type": "Unknown",
+      "age": null,
+      "gender": "Unknown"
+    },
+    "mutations": [],
+    "mutation_count": 0,
+    "mutation_burden": 0,
+    "label": 1,
+    "source_study": "fallback",
+    "timestamp": null
+  }
+]
