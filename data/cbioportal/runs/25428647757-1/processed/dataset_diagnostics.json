@@ -1,0 +1,9 @@
+{
+  "dataset_path": "data/cbioportal/processed/combined_training_dataset.json",
+  "dataset_exists_initial": false,
+  "study_files_count": 0,
+  "combined_count": 1,
+  "fallback_used": true,
+  "fallback_type": "emergency_single_row",
+  "message": "dataset prepared"
+}
